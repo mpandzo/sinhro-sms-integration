@@ -32,7 +32,7 @@ defined( "ABSPATH" ) || exit; // Exit if accessed directly
                     <?php esc_html_e("Api password", "sinhro-sms-integration"); ?><br />
                 </th>
                 <td>
-                    <input type="text" name="ssi_api_password" value="<?php echo esc_attr(get_option("ssi_api_password")); ?>" />
+                    <input type="password" name="ssi_api_password" value="<?php echo esc_attr(get_option("ssi_api_password")); ?>" />
                     <small><?php esc_html_e("Your gw.sinhro.si API password", "sinhro-sms-integration"); ?></small>
                 </td>
             </tr>
@@ -40,4 +40,33 @@ defined( "ABSPATH" ) || exit; // Exit if accessed directly
 
         <?php submit_button(); ?>
     </form>
+
+    <?php if (get_option("ssi_api_username") && get_option("ssi_api_password")) { ?>
+    <form method="post" action="<?php echo admin_url('/admin.php?page=SinhroSmsIntegration'); ?>">
+      <input type="hidden" name="ssi_send_test_sms" value="1" />
+      <h3><?php esc_html_e("Send test sms", "sinhro-sms-integration"); ?><h3>
+      <table class="form-table">
+        <tr valign="top">
+            <th scope="row">
+                <?php esc_html_e("Phone number", "sinhro-sms-integration"); ?><br />
+            </th>
+            <td>
+                <input type="text" name="ssi_api_test_phone_number" />
+                <small><?php esc_html_e("The phone number to send test SMS to", "sinhro-sms-integration"); ?></small>
+            </td>
+        </tr>
+        <tr valign="top">
+            <th scope="row">
+                <?php esc_html_e("SMS message", "sinhro-sms-integration"); ?><br />
+            </th>
+            <td>
+                <input type="text" name="ssi_api_test_message" />
+                <small><?php esc_html_e("Default: 12345", "sinhro-sms-integration"); ?></small>
+            </td>
+        </tr>
+      </table>
+      <?php submit_button("Send sms"); ?>
+    </form>
+    <?php } ?>
+
 </div>
