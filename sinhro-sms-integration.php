@@ -65,8 +65,6 @@ class SinhroSmsIntegration
 
                 if (is_null($new_cart)) {
                     WC()->session->set("cart_unique_id", uniqid());
-                } else {
-                  echo "Cart unique id is " . WC()->session->get("cart_unique_id");
                 }
             }
         }
