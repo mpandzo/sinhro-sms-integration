@@ -8,3 +8,4 @@ Note: the plugin is only usable when WooCommerce is installed and activated.
 Ideas for further development:
 
 - gdpr compliance for temp data stored in abandon carts table
+- option based delete of temp cart table from db
