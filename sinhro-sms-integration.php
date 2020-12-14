@@ -60,6 +60,10 @@ class SinhroSmsIntegration
         ?>
         <div class="error notice">
           <p><?php _e("Error. Test SMS failed to send!", "sinhro-sms-integration"); ?></p>
+          <textarea rows="10" style="width:100%;margin-bottom:20px;" disabled>
+            <?php print_r($response); ?>
+          </textarea>
+          <br />
         </div>
         <?php
         }
