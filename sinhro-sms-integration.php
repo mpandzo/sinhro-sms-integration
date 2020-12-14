@@ -34,6 +34,9 @@ class SinhroSmsIntegration
 
     public function hooks()
     {
+        register_activation_hook(__FILE__, array($this, "plugin_activate"));
+        register_deactivation_hook(__FILE__, array($this, "plugin_deactivate"));
+
         add_action("admin_menu", array($this, "admin_menu"), 10);
         add_action("init", array($this, "load_plugin_textdomain"));
         add_action("admin_init", array($this, "register_sinhro_sms_integration_settings"));
@@ -60,6 +63,42 @@ class SinhroSmsIntegration
         add_action("woocommerce_checkout_order_processed", array($this, "woocommerce_order_processed"), 10);
     }
 
+    public function plugin_activate()
+    {
+        global $wpdb;
+
+        $wcap_collate = "";
+        if ($wpdb->has_cap("collation")) {
+            $wcap_collate = $wpdb->get_charset_collate();
+        }
+
+        $temp_cart_table_name = $wpdb->prefix . "ssi_temp_cart";
+        $wpdb->query( // phpcs:ignore
+          "CREATE TABLE IF NOT EXISTS $temp_cart_table_name (
+            `id` int(11) NOT NULL auto_increment,
+            `abandone_cart_id` varchar(20) collate utf8_unicode_ci NOT NULL,
+            `abandoned_order_id` int(11) NOT NULL,
+            `time` TIMESTAMP NOT NULL,
+            `phone` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+            PRIMARY KEY  (`id`)
+          ) $wcap_collate AUTO_INCREMENT=1 "
+        );
+    }
+
+    public function plugin_deactivate()
+    {
+        global $wpdb;
+
+        require_once ABSPATH . "wp-admin/includes/upgrade.php";
+
+        $temp_cart_table_name = $wpdb->prefix . "ssi_temp_cart";
+        $wpdb->query("DROP TABLE " . $temp_cart_table_name);
+    }
+
+    public function cart_update()
+    {
+    }
+
     public function woocommerce_order_processed($order_id)
     {
     }
@@ -75,10 +114,6 @@ class SinhroSmsIntegration
                 }
             }
         }
-    }
-
-    public function cart_update()
-    {
     }
 
     public function send_test_sms_post()
