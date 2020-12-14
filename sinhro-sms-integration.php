@@ -55,6 +55,13 @@ class SinhroSmsIntegration
 
         // create unique cart id for cart
         add_action("woocommerce_init", array($this, "woocommerce_init"), 10);
+
+        // order is processed so remove any temporary references
+        add_action("woocommerce_checkout_order_processed", array($this, "woocommerce_order_processed"), 10);
+    }
+
+    public function woocommerce_order_processed($order_id)
+    {
     }
 
     public function woocommerce_init()
