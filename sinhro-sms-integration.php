@@ -23,11 +23,39 @@ class SinhroSmsIntegration
 
     public function __construct()
     {
+        // Check if WooCommerce is active
+        require_once( ABSPATH . "/wp-admin/includes/plugin.php" );
+        if ( ! is_plugin_active( "woocommerce/woocommerce.php" ) && ! function_exists( "WC" ) ) {
+            return false;
+        }
+
+
+        $this->hooks();
+    }
+
+    public function hooks() {
         add_action("admin_menu", array($this, "admin_menu"), 10);
         add_action("init", array($this, "load_plugin_textdomain"));
         add_action("admin_init", array($this, "register_sinhro_sms_integration_settings"));
         add_action("admin_init", array($this, "send_test_sms_post"));
         add_action("admin_notices", array($this, "check_test_sms_post_request"));
+
+        // woocommerce related hooks
+        // Add to cart
+        add_action("woocommerce_add_to_cart", array( $this, "cart_update" ), 10);
+
+        // Remove from cart
+        add_action("woocommerce_cart_item_removed", array( $this, "cart_update" ), 10);
+
+        // Restore cart item
+        add_action("woocommerce_cart_item_restored", array( $this, "cart_update" ), 10);
+
+        // Quantity update
+        add_action("woocommerce_after_cart_item_quantity_update", array( $this, "cart_update" ), 10);
+    }
+
+    public function cart_update() {
+
     }
 
     public function send_test_sms_post()
