@@ -30,55 +30,55 @@ class SinhroSmsIntegration
         add_action("admin_notices", array($this, "check_test_sms_post_request"));
     }
 
-    public function send_test_sms_post() {
-      if (isset($_POST["ssi_send_test_sms"]) && isset($_POST["ssi_api_test_message"]) && !empty($_POST["ssi_api_test_message"]) && isset($_POST["ssi_api_test_phone_number"]) && !empty($_POST["ssi_api_test_phone_number"])) {
-
-        $body = array(
+    public function send_test_sms_post()
+    {
+        if (isset($_POST["ssi_send_test_sms"]) && isset($_POST["ssi_api_test_message"]) && !empty($_POST["ssi_api_test_message"]) && isset($_POST["ssi_api_test_phone_number"]) && !empty($_POST["ssi_api_test_phone_number"])) {
+            $body = array(
           "username"    => get_option("ssi_api_username"),
           "password"    => get_option("ssi_api_password"),
           "text"        => sanitize_text_field($_POST["ssi_api_test_message"]),
           "call-number" => sanitize_text_field($_POST["ssi_api_test_phone_number"]),
         );
 
-        $args = array(
+            $args = array(
           "body"        => $body,
         );
 
-        $api_host = isset($_POST["ssi_api_host"]) && !empty($_POST["ssi_api_host"]) ? sanitize_text_field($_POST["ssi_api_host"]) : "http://gw.sinhro.si/api/http";
+            $api_host = isset($_POST["ssi_api_host"]) && !empty($_POST["ssi_api_host"]) ? sanitize_text_field($_POST["ssi_api_host"]) : "http://gw.sinhro.si/api/http";
 
-        $response = wp_remote_post($api_host, $args );
+            $response = wp_remote_post($api_host, $args);
 
-        if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
-        ?>
-        <div class="updated notice">
-          <p><?php _e("Success. Test SMS sent!", "sinhro-sms-integration"); ?>
-          </p>
-        </div>
-        <?php
-        } else {
-          error_log(serialize($response));
-        ?>
-        <div class="error notice">
-          <p><?php _e("Error. Test SMS failed to send!", "sinhro-sms-integration"); ?></p>
-          <textarea rows="10" style="width:100%;margin-bottom:20px;" disabled>
+            if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
+                ?>
+<div class="updated notice">
+  <p><?php _e("Success. Test SMS sent!", "sinhro-sms-integration"); ?>
+  </p>
+</div>
+<?php
+            } else {
+                error_log(serialize($response)); ?>
+<div class="error notice">
+  <p><?php _e("Error. Test SMS failed to send!", "sinhro-sms-integration"); ?>
+  </p>
+  <textarea rows="10" style="width:100%;margin-bottom:20px;" disabled>
             <?php print_r($response); ?>
           </textarea>
-          <br />
-        </div>
-        <?php
+  <br />
+</div>
+<?php
+            }
         }
-      }
     }
 
     public function check_test_sms_post_request()
     {
         if (isset($_POST["ssi_send_test_sms"]) && (!isset($_POST["ssi_api_test_message"]) || empty($_POST["ssi_api_test_message"]) || !isset($_POST["ssi_api_test_phone_number"]) || empty($_POST["ssi_api_test_phone_number"]))) {
             ?>
-            <div class="error notice">
-              <p><?php _e("There has been an error. Please make sure all test SMS fields are filled in before attempting to send test SMS!", "sinhro-sms-integration"); ?>
-              </p>
-            </div>
-            <?php
+<div class="error notice">
+  <p><?php _e("There has been an error. Please make sure all test SMS fields are filled in before attempting to send test SMS!", "sinhro-sms-integration"); ?>
+  </p>
+</div>
+<?php
         }
     }
 
