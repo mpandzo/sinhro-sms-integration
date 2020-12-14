@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sinhro Sms Integration\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-14 14:07+0100\n"
+"POT-Creation-Date: 2020-12-14 14:39+0100\n"
 "Last-Translator: Mirza Pandzo <mpandzo@gmail.com>\n"
 "Language-Team: Mirza Pandzo <mpandzo@gmail.com>\n"
 "Language: en\n"
@@ -49,6 +49,30 @@ msgstr ""
 msgid "Your gw.sinhro.si API password"
 msgstr ""
 
-#: sinhro-sms-integration.php:45
+#: partials/admin-settings.php:47
+msgid "Send test sms"
+msgstr ""
+
+#: partials/admin-settings.php:51
+msgid "Phone number"
+msgstr ""
+
+#: partials/admin-settings.php:55
+msgid "The phone number to send test SMS to"
+msgstr ""
+
+#: partials/admin-settings.php:60
+msgid "SMS message"
+msgstr ""
+
+#: partials/admin-settings.php:64
+msgid "Default: 12345"
+msgstr ""
+
+#: sinhro-sms-integration.php:36
+msgid "There has been an error. Please make sure all test SMS fields are filled in before attempting to send test SMS!"
+msgstr ""
+
+#: sinhro-sms-integration.php:56
 msgid "Sinhro Sms Integration"
 msgstr ""
