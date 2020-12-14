@@ -24,16 +24,16 @@ class SinhroSmsIntegration
     public function __construct()
     {
         // Check if WooCommerce is active
-        require_once( ABSPATH . "/wp-admin/includes/plugin.php" );
-        if ( ! is_plugin_active( "woocommerce/woocommerce.php" ) && ! function_exists( "WC" ) ) {
+        require_once(ABSPATH . "/wp-admin/includes/plugin.php");
+        if (!is_plugin_active("woocommerce/woocommerce.php") && !function_exists("WC")) {
             return false;
         }
-
 
         $this->hooks();
     }
 
-    public function hooks() {
+    public function hooks()
+    {
         add_action("admin_menu", array($this, "admin_menu"), 10);
         add_action("init", array($this, "load_plugin_textdomain"));
         add_action("admin_init", array($this, "register_sinhro_sms_integration_settings"));
@@ -52,10 +52,28 @@ class SinhroSmsIntegration
 
         // Quantity update
         add_action("woocommerce_after_cart_item_quantity_update", array( $this, "cart_update" ), 10);
+
+        // create unique cart id for cart
+        add_action("woocommerce_init", array($this, "woocommerce_init"), 10);
     }
 
-    public function cart_update() {
+    public function woocommerce_init()
+    {
+        if (is_plugin_active("woocommerce/woocommerce.php") && function_exists("WC")) {
+            if (WC()->session) {
+                $new_cart = WC()->session->get("cart_unique_id");
 
+                if (is_null($new_cart)) {
+                    WC()->session->set("cart_unique_id", uniqid());
+                } else {
+                  echo "Cart unique id is " . WC()->session->get("cart_unique_id");
+                }
+            }
+        }
+    }
+
+    public function cart_update()
+    {
     }
 
     public function send_test_sms_post()
