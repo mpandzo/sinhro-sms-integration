@@ -52,7 +52,7 @@ defined( "ABSPATH" ) || exit; // Exit if accessed directly
             </th>
             <td>
                 <input type="text" name="ssi_api_test_phone_number" />
-                <small><?php esc_html_e("The phone number to send test SMS to", "sinhro-sms-integration"); ?></small>
+                <small><?php esc_html_e("The phone number to send test SMS to with leading 0s, e.g. 003861234567", "sinhro-sms-integration"); ?></small>
             </td>
         </tr>
         <tr valign="top">
