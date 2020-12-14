@@ -44,18 +44,6 @@ class SinhroSmsIntegration
         add_action("admin_notices", array($this, "check_test_sms_post_request"));
 
         // woocommerce related hooks
-        // Add to cart
-        add_action("woocommerce_add_to_cart", array( $this, "cart_update" ), 10);
-
-        // Remove from cart
-        add_action("woocommerce_cart_item_removed", array( $this, "cart_update" ), 10);
-
-        // Restore cart item
-        add_action("woocommerce_cart_item_restored", array( $this, "cart_update" ), 10);
-
-        // Quantity update
-        add_action("woocommerce_after_cart_item_quantity_update", array( $this, "cart_update" ), 10);
-
         // create unique cart id for cart
         add_action("woocommerce_init", array($this, "woocommerce_init"), 10);
 
@@ -93,10 +81,6 @@ class SinhroSmsIntegration
 
         $temp_cart_table_name = $wpdb->prefix . "ssi_temp_cart";
         $wpdb->query("DROP TABLE " . $temp_cart_table_name);
-    }
-
-    public function cart_update()
-    {
     }
 
     public function woocommerce_order_processed($order_id)
