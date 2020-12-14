@@ -56,7 +56,7 @@ class SinhroSmsIntegration
         </div>
         <?php
         } else {
-          error_log($response);
+          error_log(serialize($response));
         ?>
         <div class="error notice">
           <p><?php _e("Error. Test SMS failed to send!", "sinhro-sms-integration"); ?></p>
