@@ -26,7 +26,19 @@ class SinhroSmsIntegration
         add_action("admin_menu", array($this, "admin_menu"), 10);
         add_action("init", array($this, "load_plugin_textdomain"));
         add_action("admin_init", array($this, "register_sinhro_sms_integration_settings"));
+        add_action("admin_init", array($this, "send_test_sms_post"));
         add_action('admin_notices', array($this, 'check_test_sms_post_request'));
+    }
+
+    public function send_test_sms_post() {
+      if (isset($_POST['ssi_send_test_sms']) && isset($_POST['ssi_api_test_message']) && !empty($_POST['ssi_api_test_message']) && isset($_POST['ssi_api_test_phone_number']) && !empty($_POST['ssi_api_test_phone_number'])) {
+        ?>
+        <div class="updated notice">
+          <p><?php _e('Success. Test SMS sent!', 'sinhro-sms-integration'); ?>
+          </p>
+        </div>
+        <?php
+      }
     }
 
     public function check_test_sms_post_request()
