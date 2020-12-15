@@ -58,7 +58,24 @@ class SinhroSmsIntegration
         // ajax hooks
         add_action("wp_ajax_record_checkout_phone", array($this, "record_checkout_phone"));
         add_action("wp_ajax_nopriv_record_checkout_phone", array($this, "record_checkout_phone"));
+
+        // cron job code
+        add_action("wp", array($this, "register_cart_cron_job"));
+        add_action("ssi_cart_process_sms", array($this, "cart_process_sms"));
     }
+
+    public function cart_process_sms()
+    {
+
+    }
+
+    public function register_cart_cron_job()
+    {
+        if (! wp_next_scheduled("ssi_cart_process_sms")) {
+            wp_schedule_event(time(), "hourly", "ssi_cart_process_sms");
+        }
+    }
+
 
     public function woocommerce_review_order_after_submit()
     {
