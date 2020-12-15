@@ -76,12 +76,23 @@ class SinhroSmsIntegration
 
     public function record_checkout_phone()
     {
+        global $wpdb;
+
         $nonce_value = isset($_REQUEST["nonce"]) ? $_REQUEST["nonce"] : "";
         $phone = isset($_REQUEST["phone"]) ? $_REQUEST["phone"] : "";
         $unique_cart_id = isset($_REQUEST["unique_cart_id"]) ? $_REQUEST["unique_cart_id"] : "";
 
         if (wp_verify_nonce($nonce_value, "woocommerce-process_checkout")) {
+          // nonce passed, we can record the phone number and cart unique id
+          $temp_cart_table_name = $wpdb->prefix . "ssi_temp_cart";
 
+          $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $temp_cart_table_name WHERE abandoned_cart_id=%s", $unique_cart_id));
+
+          error_log(serialize($row));
+
+          if (!$row) {
+            $wpdb->query($wpdb->prepare("INSERT INTO $temp_cart_table_name (abandoned_cart_id, phone) VALUES (%s, %s)", $unique_cart_id, $phone));
+          }
         }
 
         die();
