@@ -83,16 +83,19 @@ class SinhroSmsIntegration
         $unique_cart_id = isset($_REQUEST["unique_cart_id"]) ? $_REQUEST["unique_cart_id"] : "";
 
         if (wp_verify_nonce($nonce_value, "woocommerce-process_checkout")) {
-          // nonce passed, we can record the phone number and cart unique id
-          $temp_cart_table_name = $wpdb->prefix . "ssi_temp_cart";
+            // nonce passed, we can record the phone number and cart unique id
+            $temp_cart_table_name = $wpdb->prefix . "ssi_temp_cart";
 
-          $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $temp_cart_table_name WHERE abandoned_cart_id=%s", $unique_cart_id));
+            $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $temp_cart_table_name WHERE abandoned_cart_id=%s", $unique_cart_id));
 
-          error_log(serialize($row));
+            $phone = str_replace("+", "", $phone);
+            if (substr($phone, 0, strlen("00")) == "00") {
+                $phone = substr($phone, strlen("00"));
+            }
 
-          if (!$row) {
-            $wpdb->query($wpdb->prepare("INSERT INTO $temp_cart_table_name (abandoned_cart_id, phone) VALUES (%s, %s)", $unique_cart_id, $phone));
-          }
+            if (!$row) {
+                $wpdb->query($wpdb->prepare("INSERT INTO $temp_cart_table_name (abandoned_cart_id, phone) VALUES (%s, %s)", $unique_cart_id, $phone));
+            }
         }
 
         die();
