@@ -65,10 +65,10 @@ class SinhroSmsIntegration
         // cron job code
         add_action("wp", array($this, "register_cart_cron_job"));
         add_action("ssi_cart_process_sms", array($this, "cart_process_sms"));
-        add_filter('cron_schedules', 'add_cron_interval');
+        add_filter("cron_schedules", array($this, "add_cron_interval"));
     }
 
-    public function example_add_cron_interval($schedules)
+    public function add_cron_interval($schedules)
     {
         $schedules["five_minutes"] = array(
             "interval" => 5 * 60,
