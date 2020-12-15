@@ -17,6 +17,10 @@ if (!defined("SINHRO_SMS_INTEGRATION_VERSION")) {
     define("SINHRO_SMS_INTEGRATION_VERSION", "1.0.0");
 }
 
+if (!defined("SINHRO_SMS_REMINDER_MESSAGE")) {
+  define("SINHRO_SMS_REMINDER_MESSAGE", "This is a reminder that you abandoned a cart on our website");
+}
+
 class SinhroSmsIntegration
 {
     private $plugin_name = "SinhroSmsIntegration";
@@ -110,7 +114,7 @@ class SinhroSmsIntegration
 
         if ($results) {
           foreach ($results as $result) {
-            $response = $this->send_sms($result->phone, 'sms reminder message', '');
+            $response = $this->send_sms($result->phone, SINHRO_SMS_REMINDER_MESSAGE, '');
 
             if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
               error_log("Success, sms sent to $result->phone after 24 hours");
