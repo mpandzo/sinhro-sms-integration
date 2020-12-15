@@ -65,17 +65,27 @@ class SinhroSmsIntegration
         // cron job code
         add_action("wp", array($this, "register_cart_cron_job"));
         add_action("ssi_cart_process_sms", array($this, "cart_process_sms"));
+        add_filter('cron_schedules', 'add_cron_interval');
+    }
+
+    public function example_add_cron_interval($schedules)
+    {
+        $schedules["five_minutes"] = array(
+            "interval" => 5 * 60,
+            "display"  => esc_html__("Every Five Minutes", "sinhro-sms-integration")
+        );
+
+        return $schedules;
     }
 
     public function cart_process_sms()
     {
-
     }
 
     public function register_cart_cron_job()
     {
         if (! wp_next_scheduled("ssi_cart_process_sms")) {
-            wp_schedule_event(time(), "hourly", "ssi_cart_process_sms");
+            wp_schedule_event(time(), "five_minutes", "ssi_cart_process_sms");
         }
     }
 
