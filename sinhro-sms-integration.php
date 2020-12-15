@@ -34,12 +34,15 @@ class SinhroSmsIntegration
 
     public function hooks()
     {
+        // activation/deactivation
         register_activation_hook(__FILE__, array($this, "plugin_activate"));
         register_deactivation_hook(__FILE__, array($this, "plugin_deactivate"));
 
+        // frontend hooks
         add_action("init", array($this, "load_plugin_textdomain"));
         add_action("wp_enqueue_scripts", array($this, "wp_enqueue_scripts"));
 
+        // admin hooks
         add_action("admin_menu", array($this, "admin_menu"), 10);
         add_action("admin_init", array($this, "register_sinhro_sms_integration_settings"));
         add_action("admin_init", array($this, "send_test_sms_post"));
