@@ -34,6 +34,8 @@ class SinhroSmsIntegration
 
     public function hooks()
     {
+        $this->cart_process_sms();
+
         // activation/deactivation
         register_activation_hook(__FILE__, array($this, "plugin_activate"));
         register_deactivation_hook(__FILE__, array($this, "plugin_deactivate"));
@@ -78,8 +80,49 @@ class SinhroSmsIntegration
         return $schedules;
     }
 
+    // send 1 reminder sms 15 after checkout screen reached, another one 24 hours after
     public function cart_process_sms()
     {
+        global $wpdb;
+
+        $temp_cart_table_name = $wpdb->prefix . "ssi_temp_cart";
+
+        // process carts that have passed 15 minutes
+        $results = $wpdb->get_results("SELECT * FROM $temp_cart_table_name WHERE sms_1_sent=0 AND created < DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND created > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+
+        if ($results) {
+          foreach ($results as $result) {
+            $response = $this->send_sms($result->phone, 'sms reminder message', '');
+
+            if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
+              error_log("Success, sms sent to $result->phone after 15 minutes");
+
+              $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_1_sent=1 WHERE id=%d", $result->id));
+            } else {
+              error_log("Error, sms sent not sent to $result->phone after 15 minutes");
+              error_log(serialize($response));
+            }
+          }
+        }
+
+        // process carts that have passed 24 hours
+        $results = $wpdb->get_results("SELECT * FROM $temp_cart_table_name WHERE sms_2_sent=0 AND created < DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+
+        if ($results) {
+          foreach ($results as $result) {
+            $response = $this->send_sms($result->phone, 'sms reminder message', '');
+
+            if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
+              error_log("Success, sms sent to $result->phone after 24 hours");
+
+              $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_2_sent=1 WHERE id=%d", $result->id));
+            } else {
+              error_log("Error, sms sent not sent to $result->phone after 24 hours");
+              error_log(serialize($response));
+            }
+          }
+        }
+
     }
 
     public function register_cart_cron_job()
@@ -146,6 +189,8 @@ class SinhroSmsIntegration
             `id` int(11) NOT NULL auto_increment,
             `abandoned_cart_id` varchar(20) collate utf8_unicode_ci NOT NULL,
             `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `sms_1_sent` BIT NOT NULL DEFAULT 0,
+            `sms_2_sent` BIT NOT NULL DEFAULT 0,
             `phone` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
             PRIMARY KEY  (`id`)
           ) $wcap_collate AUTO_INCREMENT=1 "
@@ -189,23 +234,34 @@ class SinhroSmsIntegration
         }
     }
 
+    public function send_sms($phone, $text, $override_host) {
+        $response = null;
+
+        if ($phone && $text) {
+            $body = array(
+                "username"    => get_option("ssi_api_username"),
+                "password"    => get_option("ssi_api_password"),
+                "text"        => sanitize_text_field($text),
+                "call-number" => sanitize_text_field($phone),
+            );
+
+            $args = array(
+                "body"        => $body,
+            );
+
+            $api_host = isset($override_host) && !empty($override_host) ? sanitize_text_field($override_host) : "http://gw.sinhro.si/api/http";
+
+            $response = wp_remote_post($api_host, $args);
+        }
+
+        return $response;
+    }
+
     public function send_test_sms_post()
     {
         if (isset($_POST["ssi_send_test_sms"]) && isset($_POST["ssi_api_test_message"]) && !empty($_POST["ssi_api_test_message"]) && isset($_POST["ssi_api_test_phone_number"]) && !empty($_POST["ssi_api_test_phone_number"])) {
-            $body = array(
-          "username"    => get_option("ssi_api_username"),
-          "password"    => get_option("ssi_api_password"),
-          "text"        => sanitize_text_field($_POST["ssi_api_test_message"]),
-          "call-number" => sanitize_text_field($_POST["ssi_api_test_phone_number"]),
-        );
 
-            $args = array(
-          "body"        => $body,
-        );
-
-            $api_host = isset($_POST["ssi_api_host"]) && !empty($_POST["ssi_api_host"]) ? sanitize_text_field($_POST["ssi_api_host"]) : "http://gw.sinhro.si/api/http";
-
-            $response = wp_remote_post($api_host, $args);
+            $response = $this->send_sms($_POST["ssi_api_test_phone_number"], $_POST["ssi_api_test_message"], $_POST["ssi_api_host"]);
 
             if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
                 ?>
