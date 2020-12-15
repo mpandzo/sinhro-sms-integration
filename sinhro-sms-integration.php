@@ -37,11 +37,13 @@ class SinhroSmsIntegration
         register_activation_hook(__FILE__, array($this, "plugin_activate"));
         register_deactivation_hook(__FILE__, array($this, "plugin_deactivate"));
 
-        add_action("admin_menu", array($this, "admin_menu"), 10);
         add_action("init", array($this, "load_plugin_textdomain"));
+        add_action("wp_enqueue_scripts", array($this, "wp_enqueue_scripts"));
+
+        add_action("admin_menu", array($this, "admin_menu"), 10);
         add_action("admin_init", array($this, "register_sinhro_sms_integration_settings"));
         add_action("admin_init", array($this, "send_test_sms_post"));
-        add_action("admin_notices", array($this, "check_test_sms_post_request"));
+        add_action("admin_init", array($this, "check_test_sms_post_request"));
 
         // woocommerce related hooks
         // create unique cart id for cart
@@ -49,6 +51,40 @@ class SinhroSmsIntegration
 
         // order is processed so remove any temporary references
         add_action("woocommerce_checkout_order_processed", array($this, "woocommerce_order_processed"), 10);
+
+        // add cart unique hidden field to checkout form
+        add_action("woocommerce_review_order_after_submit", array($this, "woocommerce_review_order_after_submit"));
+
+        // ajax hooks
+        add_action("wp_ajax_record_checkout_phone", array($this, "record_checkout_phone"));
+        add_action("wp_ajax_nopriv_record_checkout_phone", array($this, "record_checkout_phone"));
+    }
+
+    public function woocommerce_review_order_after_submit()
+    {
+        if (WC()->session) {
+            $unique_cart_id = WC()->session->get("cart_unique_id");
+            echo "<input type='hidden' id='ssi-unique-cart-id' name='ssi-unique-cart-id' value='$unique_cart_id' />";
+        }
+    }
+
+    public function wp_enqueue_scripts()
+    {
+        wp_enqueue_script("singhro-sms-integration-script", plugin_dir_url(__FILE__) . "js/script.js", array("jquery"), SINHRO_SMS_INTEGRATION_VERSION, true);
+        wp_localize_script("singhro-sms-integration-script", "ssiAjax", array( "ajaxurl" => admin_url("admin-ajax.php")));
+    }
+
+    public function record_checkout_phone()
+    {
+        $nonce_value = isset($_REQUEST["nonce"]) ? $_REQUEST["nonce"] : "";
+        $phone = isset($_REQUEST["phone"]) ? $_REQUEST["phone"] : "";
+        $unique_cart_id = isset($_REQUEST["unique_cart_id"]) ? $_REQUEST["unique_cart_id"] : "";
+
+        if (wp_verify_nonce($nonce_value, "woocommerce-process_checkout")) {
+
+        }
+
+        die();
     }
 
     public function plugin_activate()
@@ -64,9 +100,8 @@ class SinhroSmsIntegration
         $wpdb->query( // phpcs:ignore
           "CREATE TABLE IF NOT EXISTS $temp_cart_table_name (
             `id` int(11) NOT NULL auto_increment,
-            `abandone_cart_id` varchar(20) collate utf8_unicode_ci NOT NULL,
-            `abandoned_order_id` int(11) NOT NULL,
-            `time` TIMESTAMP NOT NULL,
+            `abandoned_cart_id` varchar(20) collate utf8_unicode_ci NOT NULL,
+            `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             `phone` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
             PRIMARY KEY  (`id`)
           ) $wcap_collate AUTO_INCREMENT=1 "
@@ -80,7 +115,7 @@ class SinhroSmsIntegration
         require_once ABSPATH . "wp-admin/includes/upgrade.php";
 
         $temp_cart_table_name = $wpdb->prefix . "ssi_temp_cart";
-        $wpdb->query("DROP TABLE " . $temp_cart_table_name);
+        $wpdb->query("DROP TABLE IF EXISTS " . $temp_cart_table_name);
     }
 
     public function woocommerce_order_processed($order_id)
@@ -91,9 +126,9 @@ class SinhroSmsIntegration
     {
         if (is_plugin_active("woocommerce/woocommerce.php") && function_exists("WC")) {
             if (WC()->session) {
-                $new_cart = WC()->session->get("cart_unique_id");
+                $unique_cart_id = WC()->session->get("cart_unique_id");
 
-                if (is_null($new_cart)) {
+                if (is_null($unique_cart_id)) {
                     WC()->session->set("cart_unique_id", uniqid());
                 }
             }
@@ -145,7 +180,7 @@ class SinhroSmsIntegration
         if (isset($_POST["ssi_send_test_sms"]) && (!isset($_POST["ssi_api_test_message"]) || empty($_POST["ssi_api_test_message"]) || !isset($_POST["ssi_api_test_phone_number"]) || empty($_POST["ssi_api_test_phone_number"]))) {
             ?>
 <div class="error notice">
-  <p><?php _e("There has been an error. Please make sure all test SMS fields are filled in before attempting to send test SMS!", "sinhro-sms-integration"); ?>
+  <p><?php _e("There has been an error when trying to send a test SMS. Please make sure all test SMS fields are filled in before attempting to send!", "sinhro-sms-integration"); ?>
   </p>
 </div>
 <?php

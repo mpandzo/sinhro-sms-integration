@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sinhro Sms Integration\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-14 14:39+0100\n"
+"POT-Creation-Date: 2020-12-15 12:31+0100\n"
 "Last-Translator: Mirza Pandzo <mpandzo@gmail.com>\n"
 "Language-Team: Mirza Pandzo <mpandzo@gmail.com>\n"
 "Language: en\n"
@@ -58,7 +58,7 @@ msgid "Phone number"
 msgstr ""
 
 #: partials/admin-settings.php:55
-msgid "The phone number to send test SMS to"
+msgid "The phone number to send test SMS to with leading 0s, e.g. 003861234567"
 msgstr ""
 
 #: partials/admin-settings.php:60
@@ -69,10 +69,18 @@ msgstr ""
 msgid "Default: 12345"
 msgstr ""
 
-#: sinhro-sms-integration.php:36
-msgid "There has been an error. Please make sure all test SMS fields are filled in before attempting to send test SMS!"
+#: sinhro-sms-integration.php:124
+msgid "Success. Test SMS sent!"
 msgstr ""
 
-#: sinhro-sms-integration.php:56
+#: sinhro-sms-integration.php:131
+msgid "Error. Test SMS failed to send!"
+msgstr ""
+
+#: sinhro-sms-integration.php:148
+msgid "There has been an error when trying to send a test SMS. Please make sure all test SMS fields are filled in before attempting to send!"
+msgstr ""
+
+#: sinhro-sms-integration.php:169
 msgid "Sinhro Sms Integration"
 msgstr ""
