@@ -134,6 +134,16 @@ class SinhroSmsIntegration
 
     public function woocommerce_order_processed($order_id)
     {
+        global $wpdb;
+        if (WC()->session) {
+            $temp_cart_table_name = $wpdb->prefix . "ssi_temp_cart";
+            $unique_cart_id = WC()->session->get("cart_unique_id");
+            $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $temp_cart_table_name WHERE abandoned_cart_id=%s", $unique_cart_id));
+
+            if ($row) {
+                $wpdb->query($wpdb->prepare("DELETE FROM " . $temp_cart_table_name . " WHERE abandoned_cart_id=%s", $unique_cart_id));
+            }
+        }
     }
 
     public function woocommerce_init()
