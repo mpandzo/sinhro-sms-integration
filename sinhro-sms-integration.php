@@ -261,7 +261,11 @@ class SinhroSmsIntegration
     {
         if (isset($_POST["ssi_send_test_sms"]) && isset($_POST["ssi_api_test_message"]) && !empty($_POST["ssi_api_test_message"]) && isset($_POST["ssi_api_test_phone_number"]) && !empty($_POST["ssi_api_test_phone_number"])) {
 
-            $response = $this->send_sms($_POST["ssi_api_test_phone_number"], $_POST["ssi_api_test_message"], $_POST["ssi_api_host"]);
+            $override_api_host = "";
+            if (isset($_POST["ssi_api_host"]) && !empty($_POST["ssi_api_host"])) {
+              $override_api_host = $_POST["ssi_api_host"];
+            }
+            $response = $this->send_sms($_POST["ssi_api_test_phone_number"], $_POST["ssi_api_test_message"], $override_api_host);
 
             if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
                 ?>
