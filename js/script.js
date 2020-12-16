@@ -18,7 +18,7 @@
         var uniqueCartId = $('#ssi-unique-cart-id').val();
 
         // optional + and 00 at the start and at least 10 digits
-        var phonePattern = /^\+?(00)?\d{10,}$/;
+        var phonePattern = /^\+?(00)?\d{5,}$/;
 
         if (nonce && phone && uniqueCartId && phonePattern.test(phone)) {
           var dataObj = {
