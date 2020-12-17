@@ -20,12 +20,22 @@ defined( "ABSPATH" ) || exit; // Exit if accessed directly
             </tr>
             <tr valign="top">
                 <th scope="row">
-                    <?php esc_html_e("Discount value", "sinhro-sms-integration"); ?><br />
-                    <small><?php esc_html_e("Override default discout value string (20%)", "sinhro-sms-integration"); ?></small>
+                    <?php esc_html_e("Discount value string", "sinhro-sms-integration"); ?><br />
+                    <small><?php esc_html_e("Override default discount value string (20%)", "sinhro-sms-integration"); ?></small>
                 </th>
                 <td>
-                    <input type="text" name="ssi_api_discount_value" value="<?php echo esc_attr(get_option("ssi_api_discount_value")); ?>" />
+                    <input type="text" name="ssi_api_discount_value_string" value="<?php echo esc_attr(get_option("ssi_api_discount_value_string")); ?>" />
                     <small><?php esc_html_e("Default: 20%", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Discount url parameter", "sinhro-sms-integration"); ?><br />
+                    <small><?php esc_html_e("Override default discount url parameter (20off)", "sinhro-sms-integration"); ?></small>
+                </th>
+                <td>
+                    <input type="text" name="ssi_api_discount_url_param" value="<?php echo esc_attr(get_option("ssi_api_discount_url_param")); ?>" />
+                    <small><?php esc_html_e("Default: 20off", "sinhro-sms-integration"); ?></small>
                 </td>
             </tr>
             <tr valign="top">
