@@ -40,6 +40,16 @@ defined( "ABSPATH" ) || exit; // Exit if accessed directly
             </tr>
             <tr valign="top">
                 <th scope="row">
+                    <?php esc_html_e("Discount cart url", "sinhro-sms-integration"); ?><br />
+                    <small><?php esc_html_e("Override default cart url (woocommerce cart url)", "sinhro-sms-integration"); ?></small>
+                </th>
+                <td>
+                    <input type="text" name="ssi_api_cart_url" value="<?php echo esc_attr(get_option("ssi_api_cart_url")); ?>" />
+                    <small><?php esc_html_e("Default: http://yourdomain.com/cart?c=%s", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
                     <?php esc_html_e("Api username", "sinhro-sms-integration"); ?><br />
                 </th>
                 <td>
