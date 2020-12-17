@@ -20,6 +20,16 @@ defined( "ABSPATH" ) || exit; // Exit if accessed directly
             </tr>
             <tr valign="top">
                 <th scope="row">
+                    <?php esc_html_e("Discount value", "sinhro-sms-integration"); ?><br />
+                    <small><?php esc_html_e("Override default discout value string (20%)", "sinhro-sms-integration"); ?></small>
+                </th>
+                <td>
+                    <input type="text" name="ssi_api_discount_value" value="<?php echo esc_attr(get_option("ssi_api_discount_value")); ?>" />
+                    <small><?php esc_html_e("Default: 20%", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
                     <?php esc_html_e("Api username", "sinhro-sms-integration"); ?><br />
                 </th>
                 <td>
