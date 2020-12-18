@@ -130,7 +130,8 @@ class SinhroSmsIntegration
                   $cart_url = get_option("ssi_api_cart_url_2");
                 }
 
-                $response = $this->send_sms($result->phone, sprintf(esc_html__("Hey %s, get %s OFF your purchase. Hurry, before it expires: %s", "sinhro-sms-integration"), $customer_first_name, `${discount_value}%`, $cart_url), "");
+                $sms_message = sprintf(esc_html__("Hey %s, get %d%% OFF your purchase. Hurry, before it expires: %s", "sinhro-sms-integration"), $customer_first_name, $discount_value, $cart_url);
+                $response = $this->send_sms($result->phone, $sms_message, "");
 
                 if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
                     error_log("Success, sms sent to $result->phone after 24 hours");
@@ -336,6 +337,7 @@ class SinhroSmsIntegration
 
     public function load_plugin_textdomain()
     {
+        $this->cart_process_sms();
         load_plugin_textdomain("sinhro-sms-integration", false, dirname(plugin_basename(__FILE__)) . "/languages");
     }
 
