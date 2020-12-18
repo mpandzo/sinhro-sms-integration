@@ -122,16 +122,15 @@ class SinhroSmsIntegration
             if (function_exists("wc_get_cart_url")) {
 
                 $customer_first_name = isset($result->first_name) ? $result->first_name : "";
-                $discount_value_string = get_option("ssi_api_discount_value_string") ? get_option("ssi_api_discount_value_string") : "20%";
-                $discount_value_url_param = get_option("ssi_api_discount_url_param") ? get_option("ssi_api_discount_url_param") : "20off";
+                $discount_value = get_option("ssi_api_discount_value") ? get_option("ssi_api_discount_value") : "20";
                 $cart_url = wc_get_cart_url();
-                $cart_url = add_query_arg("c", $discount_value_url_param, $cart_url);
+                $cart_url = add_query_arg("c", `${discount_value}off`, $cart_url);
 
                 if (!empty(get_option("ssi_api_cart_url_2"))) {
                   $cart_url = get_option("ssi_api_cart_url_2");
                 }
 
-                $response = $this->send_sms($result->phone, sprintf(esc_html__("Hey %s, get %s OFF your purchase. Hurry, before it expires: %s", "sinhro-sms-integration"), $customer_first_name, $discount_value_string, $cart_url), "");
+                $response = $this->send_sms($result->phone, sprintf(esc_html__("Hey %s, get %s OFF your purchase. Hurry, before it expires: %s", "sinhro-sms-integration"), $customer_first_name, `${discount_value}%`, $cart_url), "");
 
                 if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
                     error_log("Success, sms sent to $result->phone after 24 hours");
@@ -329,8 +328,7 @@ class SinhroSmsIntegration
     {
         register_setting("sinhro-sms-integration-settings", "ssi_api_host");
         register_setting("sinhro-sms-integration-settings", "ssi_api_username");
-        register_setting("sinhro-sms-integration-settings", "ssi_api_discount_value_string");
-        register_setting("sinhro-sms-integration-settings", "ssi_api_discount_url_param");
+        register_setting("sinhro-sms-integration-settings", "ssi_api_discount_value");
         register_setting("sinhro-sms-integration-settings", "ssi_api_password");
         register_setting("sinhro-sms-integration-settings", "ssi_api_cart_url_1");
         register_setting("sinhro-sms-integration-settings", "ssi_api_cart_url_2");
