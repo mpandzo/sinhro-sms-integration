@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sinhro Sms Integration\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-17 15:52+0100\n"
+"POT-Creation-Date: 2020-12-18 14:32+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Mirza Pandzo <mpandzo@gmail.com>\n"
 "Language-Team: Mirza Pandzo <mpandzo@gmail.com>\n"
@@ -58,38 +58,63 @@ msgid "Default: 20off"
 msgstr ""
 
 #: partials/admin-settings.php:43
+msgid "First sms cart url"
+msgstr ""
+
+#: partials/admin-settings.php:44
+msgid "Override default first sms cart url (woocommerce cart url)"
+msgstr ""
+
+#: partials/admin-settings.php:48
+msgid "Default: http://yourdomain.com/cart"
+msgstr ""
+
+#: partials/admin-settings.php:53
+msgid "Second sms cart url"
+msgstr ""
+
+#: partials/admin-settings.php:54
+msgid "Override default second cart url (woocommerce cart url)"
+msgstr ""
+
+#: partials/admin-settings.php:58
+#, php-format
+msgid "Default: http://yourdomain.com/cart?c=%s"
+msgstr ""
+
+#: partials/admin-settings.php:64
 msgid "Api username"
 msgstr ""
 
-#: partials/admin-settings.php:47
+#: partials/admin-settings.php:68
 msgid "Your gw.sinhro.si API username"
 msgstr ""
 
-#: partials/admin-settings.php:52
+#: partials/admin-settings.php:73
 msgid "Api password"
 msgstr ""
 
-#: partials/admin-settings.php:56
+#: partials/admin-settings.php:77
 msgid "Your gw.sinhro.si API password"
 msgstr ""
 
-#: partials/admin-settings.php:67
+#: partials/admin-settings.php:88
 msgid "Send test sms"
 msgstr ""
 
-#: partials/admin-settings.php:71
+#: partials/admin-settings.php:92
 msgid "Phone number"
 msgstr ""
 
-#: partials/admin-settings.php:75
+#: partials/admin-settings.php:96
 msgid "The phone number to send test SMS to with leading 0s, e.g. 003861234567"
 msgstr ""
 
-#: partials/admin-settings.php:80
+#: partials/admin-settings.php:101
 msgid "SMS message"
 msgstr ""
 
-#: partials/admin-settings.php:84
+#: partials/admin-settings.php:105
 msgid "Default: 12345"
 msgstr ""
 
@@ -97,7 +122,7 @@ msgstr ""
 msgid "Every Five Minutes"
 msgstr ""
 
-#: sinhro-sms-integration.php:99
+#: sinhro-sms-integration.php:103
 #, php-format
 msgid ""
 "Oops! You left something in your cart! You can finish what you started here: "
@@ -106,27 +131,27 @@ msgstr ""
 "Oups ! Vous avez oublié quelque chose dans votre panier ! Vous pouvez finir "
 "ce que vous avez commencé ici : %s"
 
-#: sinhro-sms-integration.php:126
+#: sinhro-sms-integration.php:134
 #, php-format
 msgid "Hey %s, get %s OFF your purchase. Hurry, before it expires: %s"
 msgstr ""
 "Bonjour %s, profitez d'un %s sur votre achat. Dépêchez-vous avant qu'il "
 "n'expire : %s"
 
-#: sinhro-sms-integration.php:289
+#: sinhro-sms-integration.php:297
 msgid "Success. Test SMS sent!"
 msgstr ""
 
-#: sinhro-sms-integration.php:296
+#: sinhro-sms-integration.php:304
 msgid "Error. Test SMS failed to send!"
 msgstr ""
 
-#: sinhro-sms-integration.php:313
+#: sinhro-sms-integration.php:321
 msgid ""
 "There has been an error when trying to send a test SMS. Please make sure all "
 "test SMS fields are filled in before attempting to send!"
 msgstr ""
 
-#: sinhro-sms-integration.php:337
+#: sinhro-sms-integration.php:346
 msgid "Sinhro Sms Integration"
 msgstr ""

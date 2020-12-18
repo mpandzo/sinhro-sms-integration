@@ -96,6 +96,10 @@ class SinhroSmsIntegration
           foreach ($results as $result) {
             if (function_exists("wc_get_cart_url")) {
                 $cart_url = wc_get_cart_url();
+                if (!empty(get_option("ssi_api_cart_url_1"))) {
+                  $cart_url = get_option("ssi_api_cart_url_1");
+                }
+
                 $response = $this->send_sms($result->phone, sprintf(esc_html__("Oops! You left something in your cart! You can finish what you started here: %s", "sinhro-sms-integration"), $cart_url), "");
 
                 if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
@@ -123,8 +127,8 @@ class SinhroSmsIntegration
                 $cart_url = wc_get_cart_url();
                 $cart_url = add_query_arg("c", $discount_value_url_param, $cart_url);
 
-                if (!empty(get_option("ssi_api_cart_url"))) {
-                  $cart_url = get_option("ssi_api_cart_url");
+                if (!empty(get_option("ssi_api_cart_url_2"))) {
+                  $cart_url = get_option("ssi_api_cart_url_2");
                 }
 
                 $response = $this->send_sms($result->phone, sprintf(esc_html__("Hey %s, get %s OFF your purchase. Hurry, before it expires: %s", "sinhro-sms-integration"), $customer_first_name, $discount_value_string, $cart_url), "");
@@ -328,12 +332,12 @@ class SinhroSmsIntegration
         register_setting("sinhro-sms-integration-settings", "ssi_api_discount_value_string");
         register_setting("sinhro-sms-integration-settings", "ssi_api_discount_url_param");
         register_setting("sinhro-sms-integration-settings", "ssi_api_password");
-        register_setting("sinhro-sms-integration-settings", "ssi_api_cart_url");
+        register_setting("sinhro-sms-integration-settings", "ssi_api_cart_url_1");
+        register_setting("sinhro-sms-integration-settings", "ssi_api_cart_url_2");
     }
 
     public function load_plugin_textdomain()
     {
-        $this->cart_process_sms();
         load_plugin_textdomain("sinhro-sms-integration", false, dirname(plugin_basename(__FILE__)) . "/languages");
     }
 
