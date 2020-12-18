@@ -337,7 +337,6 @@ class SinhroSmsIntegration
 
     public function load_plugin_textdomain()
     {
-        $this->cart_process_sms();
         load_plugin_textdomain("sinhro-sms-integration", false, dirname(plugin_basename(__FILE__)) . "/languages");
     }
 
