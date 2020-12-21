@@ -180,6 +180,8 @@ class SinhroSmsIntegration
 
         if (wp_verify_nonce($nonce_value, "woocommerce-process_checkout")) {
             // nonce passed, we can record the phone number and cart unique id
+            $this->check_and_create_db_table();
+
             $temp_cart_table_name = $wpdb->prefix . "ssi_temp_cart";
 
             $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $temp_cart_table_name WHERE abandoned_cart_id=%s", $unique_cart_id));
@@ -198,6 +200,11 @@ class SinhroSmsIntegration
     }
 
     public function plugin_activate()
+    {
+        $this->check_and_create_db_table();
+    }
+
+    public function check_and_create_db_table()
     {
         global $wpdb;
 
@@ -234,7 +241,10 @@ class SinhroSmsIntegration
     public function woocommerce_order_processed($order_id)
     {
         global $wpdb;
+
         if (WC()->session) {
+            $this->check_and_create_db_table();
+
             $temp_cart_table_name = $wpdb->prefix . "ssi_temp_cart";
             $unique_cart_id = WC()->session->get("cart_unique_id");
             $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $temp_cart_table_name WHERE abandoned_cart_id=%s", $unique_cart_id));
