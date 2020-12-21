@@ -3,7 +3,7 @@
 Plugin Name:  Sinhro Sms Integration
 Plugin URI:   https://github.com/mpandzo/sinhro-sms-integration
 Description:  A WordPress plugin that allows integration with the http://gw.sinhro.si/api/http api for sending SMSs
-Version:      1.0.0
+Version:      1.0.1
 Author:       mpandzo
 Author URI:   https://mthit.com
 License:      MIT License
@@ -14,7 +14,7 @@ namespace MPandzo\SinhroSmsIntegration;
 defined("ABSPATH") || exit; // Exit if accessed directly
 
 if (!defined("SINHRO_SMS_INTEGRATION_VERSION")) {
-    define("SINHRO_SMS_INTEGRATION_VERSION", "1.0.0");
+    define("SINHRO_SMS_INTEGRATION_VERSION", "1.0.1");
 }
 
 if (!defined("SINHRO_SMS_REMINDER_MESSAGE")) {
