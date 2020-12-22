@@ -18,7 +18,7 @@ if (!defined("SINHRO_SMS_INTEGRATION_VERSION")) {
 }
 
 if (!defined("SINHRO_SMS_REMINDER_MESSAGE")) {
-  define("SINHRO_SMS_REMINDER_MESSAGE", "This is a reminder that you abandoned a cart on our website");
+    define("SINHRO_SMS_REMINDER_MESSAGE", "This is a reminder that you abandoned a cart on our website");
 }
 
 class SinhroSmsIntegration
@@ -93,58 +93,56 @@ class SinhroSmsIntegration
         $results = $wpdb->get_results("SELECT * FROM $temp_cart_table_name WHERE sms_1_sent=0 AND created < DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND created > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
 
         if ($results) {
-          foreach ($results as $result) {
-            if (function_exists("wc_get_cart_url")) {
-                $cart_url = wc_get_cart_url();
-                if (!empty(get_option("ssi_api_cart_url_1"))) {
-                  $cart_url = get_option("ssi_api_cart_url_1");
-                }
+            foreach ($results as $result) {
+                if (function_exists("wc_get_cart_url")) {
+                    $cart_url = wc_get_cart_url();
+                    if (!empty(get_option("ssi_api_cart_url_1"))) {
+                        $cart_url = get_option("ssi_api_cart_url_1");
+                    }
 
-                $response = $this->send_sms($result->phone, sprintf(esc_html__("Oops! You left something in your cart! You can finish what you started here: %s", "sinhro-sms-integration"), $cart_url), "");
+                    $response = $this->send_sms($result->phone, sprintf(esc_html__("Oops! You left something in your cart! You can finish what you started here: %s", "sinhro-sms-integration"), $cart_url), "");
 
-                if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
-                    error_log("Success, sms sent to $result->phone after 15 minutes");
+                    if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
+                        error_log("Success, sms sent to $result->phone after 15 minutes");
 
-                    $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_1_sent=1 WHERE id=%d", $result->id));
-                } else {
-                    error_log("Error, sms sent not sent to $result->phone after 15 minutes");
-                    error_log(serialize($response));
+                        $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_1_sent=1 WHERE id=%d", $result->id));
+                    } else {
+                        error_log("Error, sms sent not sent to $result->phone after 15 minutes");
+                        error_log(serialize($response));
+                    }
                 }
             }
-          }
         }
 
         // process carts that have passed 24 hours
         $results = $wpdb->get_results("SELECT * FROM $temp_cart_table_name WHERE sms_2_sent=0 AND created < DATE_SUB(NOW(), INTERVAL 24 HOUR)");
 
         if ($results) {
-          foreach ($results as $result) {
-            if (function_exists("wc_get_cart_url")) {
+            foreach ($results as $result) {
+                if (function_exists("wc_get_cart_url")) {
+                    $customer_first_name = isset($result->first_name) ? $result->first_name : "";
+                    $discount_value = get_option("ssi_api_discount_value") ? get_option("ssi_api_discount_value") : "20";
+                    $cart_url = wc_get_cart_url();
+                    $cart_url = add_query_arg("c", `${discount_value}off`, $cart_url);
 
-                $customer_first_name = isset($result->first_name) ? $result->first_name : "";
-                $discount_value = get_option("ssi_api_discount_value") ? get_option("ssi_api_discount_value") : "20";
-                $cart_url = wc_get_cart_url();
-                $cart_url = add_query_arg("c", `${discount_value}off`, $cart_url);
+                    if (!empty(get_option("ssi_api_cart_url_2"))) {
+                        $cart_url = get_option("ssi_api_cart_url_2");
+                    }
 
-                if (!empty(get_option("ssi_api_cart_url_2"))) {
-                  $cart_url = get_option("ssi_api_cart_url_2");
-                }
+                    $sms_message = sprintf(esc_html__("Hey %s, get %d%% OFF your purchase. Hurry, before it expires: %s", "sinhro-sms-integration"), $customer_first_name, $discount_value, $cart_url);
+                    $response = $this->send_sms($result->phone, $sms_message, "");
 
-                $sms_message = sprintf(esc_html__("Hey %s, get %d%% OFF your purchase. Hurry, before it expires: %s", "sinhro-sms-integration"), $customer_first_name, $discount_value, $cart_url);
-                $response = $this->send_sms($result->phone, $sms_message, "");
+                    if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
+                        error_log("Success, sms sent to $result->phone after 24 hours");
 
-                if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
-                    error_log("Success, sms sent to $result->phone after 24 hours");
-
-                    $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_2_sent=1 WHERE id=%d", $result->id));
-                } else {
-                    error_log("Error, sms sent not sent to $result->phone after 24 hours");
-                    error_log(serialize($response));
+                        $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_2_sent=1 WHERE id=%d", $result->id));
+                    } else {
+                        error_log("Error, sms sent not sent to $result->phone after 24 hours");
+                        error_log(serialize($response));
+                    }
                 }
             }
-          }
         }
-
     }
 
     public function register_cart_cron_job()
@@ -215,16 +213,16 @@ class SinhroSmsIntegration
 
         $temp_cart_table_name = $wpdb->prefix . "ssi_temp_cart";
         $wpdb->query( // phpcs:ignore
-          "CREATE TABLE IF NOT EXISTS $temp_cart_table_name (
-            `id` int(11) NOT NULL auto_increment,
-            `abandoned_cart_id` varchar(20) collate utf8_unicode_ci NOT NULL,
-            `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            `sms_1_sent` BIT NOT NULL DEFAULT 0,
-            `sms_2_sent` BIT NOT NULL DEFAULT 0,
-            `phone` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
-            `first_name` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
-            PRIMARY KEY  (`id`)
-          ) $wcap_collate AUTO_INCREMENT=1 "
+            "CREATE TABLE IF NOT EXISTS $temp_cart_table_name (
+              `id` int(11) NOT NULL auto_increment,
+              `abandoned_cart_id` varchar(20) collate utf8_unicode_ci NOT NULL,
+              `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+              `sms_1_sent` BIT NOT NULL DEFAULT 0,
+              `sms_2_sent` BIT NOT NULL DEFAULT 0,
+              `phone` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+              `first_name` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+              PRIMARY KEY  (`id`)
+            ) $wcap_collate AUTO_INCREMENT=1 "
         );
     }
 
@@ -268,10 +266,54 @@ class SinhroSmsIntegration
         }
     }
 
-    public function send_sms($phone, $text, $override_host) {
+    public function i18n_country_calling_codes()
+    {
+        $codes = [
+            "bg_BG" => "359",
+            "bs_BA" => "387",
+            "cs_CZ" => "42",
+            "de_DE" => "49",
+            "el" => "30",
+            "es_ES" => "34",
+            "fr_FR" => "33",
+            "hr" => "385",
+            "hu_HU" => "36",
+            "it_IT" => "39",
+            "pl_PL" => "48",
+            "pt_PT" => "351",
+            "ro_RO" => "40",
+            "sk_SK" => "421",
+            "sl_SI" => "386",
+            "sr_RS" => "381",
+        ];
+    }
+
+    public function i18n_country_calling_code($lcid)
+    {
+        $codes = $this->i18n_country_calling_codes();
+
+        return isset($codes[$lcid]) ? $codes[$lcid] : "386";
+    }
+
+    public function send_sms($phone, $text, $override_host, $override_i18n = false)
+    {
         $response = null;
 
         if ($phone && $text) {
+            $phone = str_replace("+", "", $phone);
+            if (substr($phone, 0, strlen("00")) == "00") {
+                $phone = substr($phone, strlen("00"));
+            }
+
+            if (!$override_i18n) {
+                $country_code = $this->i18n_country_calling_code(get_locale());
+                if (substr($phone, 0, strlen($country_code)) != $country_code) {
+                    $phone = $country_code . $phone;
+                }
+            }
+
+            $phone = "00" . $phone;
+
             $body = array(
                 "username"    => get_option("ssi_api_username"),
                 "password"    => get_option("ssi_api_password"),
@@ -294,12 +336,14 @@ class SinhroSmsIntegration
     public function send_test_sms_post()
     {
         if (isset($_POST["ssi_send_test_sms"]) && isset($_POST["ssi_api_test_message"]) && !empty($_POST["ssi_api_test_message"]) && isset($_POST["ssi_api_test_phone_number"]) && !empty($_POST["ssi_api_test_phone_number"])) {
-
             $override_api_host = "";
             if (isset($_POST["ssi_api_host"]) && !empty($_POST["ssi_api_host"])) {
-              $override_api_host = $_POST["ssi_api_host"];
+                $override_api_host = $_POST["ssi_api_host"];
             }
-            $response = $this->send_sms($_POST["ssi_api_test_phone_number"], $_POST["ssi_api_test_message"], $override_api_host);
+
+            $phone = $_POST["ssi_api_test_phone_number"];
+
+            $response = $this->send_sms($phone, $_POST["ssi_api_test_message"], $override_api_host, true);
 
             if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
                 ?>
