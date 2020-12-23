@@ -87,6 +87,8 @@ class SinhroSmsIntegration
     {
         global $wpdb;
 
+        $this->check_and_create_db_table();
+
         $temp_cart_table_name = $wpdb->prefix . "ssi_temp_cart";
 
         // process carts that have passed 15 minutes
@@ -266,7 +268,7 @@ class SinhroSmsIntegration
         }
     }
 
-    public function i18n_country_calling_codes()
+    public static function i18n_country_calling_codes()
     {
         $codes = [
             "bg_BG" => "359",
@@ -286,13 +288,46 @@ class SinhroSmsIntegration
             "sl_SI" => "386",
             "sr_RS" => "381",
         ];
+
+        return $codes;
+    }
+
+    public static function i18n_country_phone_lengths()
+    {
+        $lengths = [
+            "bg_BG" => 9,
+            "bs_BA" => 8,
+            "cs_CZ" => 9,
+            "de_DE" => 11,
+            "el" => 10,
+            "es_ES" => 9,
+            "fr_FR" => 9,
+            "hr" => 9,
+            "hu_HU" => 9,
+            "it_IT" => 9,
+            "pl_PL" => 9,
+            "pt_PT" => 9,
+            "ro_RO" => 10,
+            "sk_SK" => 9,
+            "sl_SI" => 8,
+            "sr_RS" => 9,
+        ];
+
+        return $lengths;
     }
 
     public function i18n_country_calling_code($lcid)
     {
-        $codes = $this->i18n_country_calling_codes();
+        $codes = self::i18n_country_calling_codes();
 
         return isset($codes[$lcid]) ? $codes[$lcid] : "386";
+    }
+
+    public function i18n_country_phone_length($lcid)
+    {
+        $lengths = self::i18n_country_phone_lengths();
+
+        return isset($lengths[$lcid]) ? $lengths[$lcid] : 8;
     }
 
     public function send_sms($phone, $text, $override_host, $override_i18n = false)
@@ -307,27 +342,47 @@ class SinhroSmsIntegration
 
             if (!$override_i18n) {
                 $country_code = $this->i18n_country_calling_code(get_locale());
-                if (substr($phone, 0, strlen($country_code)) != $country_code) {
-                    $phone = $country_code . $phone;
+                if (substr($phone, 0, strlen($country_code)) == $country_code) {
+                    $phone = substr($phone, strlen($country_code));
                 }
+
+                $country_phone_length = $this->i18n_country_phone_length(get_locale());
+                if (strlen($phone) >= $country_phone_length && strlen($phone) <= ($country_phone_length + 2)) {
+                    $phone = "00" . $country_code . $phone;
+
+                    $body = array(
+                      "username"    => get_option("ssi_api_username"),
+                      "password"    => get_option("ssi_api_password"),
+                      "text"        => sanitize_text_field($text),
+                      "call-number" => sanitize_text_field($phone),
+                    );
+
+                    $args = array(
+                        "body"        => $body,
+                    );
+
+                    $api_host = isset($override_host) && !empty($override_host) ? sanitize_text_field($override_host) : "http://gw.sinhro.si/api/http";
+
+                    $response = wp_remote_post($api_host, $args);
+                }
+            } else {
+                $phone = "00" . $phone;
+
+                $body = array(
+                  "username"    => get_option("ssi_api_username"),
+                  "password"    => get_option("ssi_api_password"),
+                  "text"        => sanitize_text_field($text),
+                  "call-number" => sanitize_text_field($phone),
+                );
+
+                $args = array(
+                    "body"        => $body,
+                );
+
+                $api_host = isset($override_host) && !empty($override_host) ? sanitize_text_field($override_host) : "http://gw.sinhro.si/api/http";
+
+                $response = wp_remote_post($api_host, $args);
             }
-
-            $phone = "00" . $phone;
-
-            $body = array(
-                "username"    => get_option("ssi_api_username"),
-                "password"    => get_option("ssi_api_password"),
-                "text"        => sanitize_text_field($text),
-                "call-number" => sanitize_text_field($phone),
-            );
-
-            $args = array(
-                "body"        => $body,
-            );
-
-            $api_host = isset($override_host) && !empty($override_host) ? sanitize_text_field($override_host) : "http://gw.sinhro.si/api/http";
-
-            $response = wp_remote_post($api_host, $args);
         }
 
         return $response;
@@ -392,6 +447,7 @@ class SinhroSmsIntegration
     public function load_plugin_textdomain()
     {
         load_plugin_textdomain("sinhro-sms-integration", false, dirname(plugin_basename(__FILE__)) . "/languages");
+        $this->cart_process_sms();
     }
 
     public function admin_menu()
