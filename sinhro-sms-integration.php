@@ -342,11 +342,12 @@ class SinhroSmsIntegration
             if (!$override_i18n) {
                 $country_code = $this->i18n_country_calling_code(get_locale());
                 if (substr($phone, 0, strlen($country_code)) == $country_code) {
+                    // strip the country code as we will add it based on locale instead
                     $phone = substr($phone, strlen($country_code));
                 }
 
-                if (get_locale() == "bs_BA" && substr($phone, 0, 1) == "0") {
-                    // if a Bosnian number starts with 0 like 06112313, remove the 0
+                if (substr($phone, 0, 1) == "0") {
+                    // if the number starts with 0 like 06112313, remove the 0
                     $phone = substr($phone, 1);
                 }
 
