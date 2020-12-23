@@ -116,14 +116,13 @@ msgid ""
 "Oops! You left something in your cart! You can finish what you started here: "
 "%s"
 msgstr ""
-"¡Ups! ¡Se ha dejado algo en su carrito! Puede terminar lo que comenzó aquí: "
-"%s"
+"Ups! Se ha dejado algo en su carrito! Puede terminar lo que comenzo aqui: %s"
 
 #: sinhro-sms-integration.php:133
 #, php-format
 msgid "Hey %s, get %d%% OFF your purchase. Hurry, before it expires: %s"
 msgstr ""
-"Hola, %s, puede disfrutar de un descuento de %d%% en su compra. ¡Dese prisa "
+"Hola, %s, puede disfrutar de un descuento de %d%% en su compra. Dese prisa "
 "antes de que caduque!: %s"
 
 #: sinhro-sms-integration.php:297

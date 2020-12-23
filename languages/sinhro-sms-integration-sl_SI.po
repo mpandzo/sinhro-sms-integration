@@ -117,14 +117,14 @@ msgid ""
 "Oops! You left something in your cart! You can finish what you started here: "
 "%s"
 msgstr ""
-"Ups! Nekaj ste pozabili v vaši košarici! Svoj nakup lahko dokončate tukaj: %s"
+"Ups! Nekaj ste pozabili v vasi kosarici! Svoj nakup lahko dokoncate tukaj: %s"
 
 #: sinhro-sms-integration.php:133
 #, php-format
 msgid "Hey %s, get %d%% OFF your purchase. Hurry, before it expires: %s"
 msgstr ""
-"Pozdravljeni %s, pridobite %d%% POPUSTA na vaš nakup. Pohitite, preden se "
-"ponudba izteče: %s"
+"Pozdravljeni %s, pridobite %d%% POPUSTA na vas nakup. Pohitite, preden se "
+"ponudba iztece: %s"
 
 #: sinhro-sms-integration.php:297
 msgid "Success. Test SMS sent!"

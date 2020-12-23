@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sinhro Sms Integration\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-21 12:17+0100\n"
+"POT-Creation-Date: 2020-12-23 09:45+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Mirza Pandzo <mpandzo@gmail.com>\n"
 "Language-Team: Mirza Pandzo <mpandzo@gmail.com>\n"
@@ -116,30 +116,30 @@ msgid ""
 "Oops! You left something in your cart! You can finish what you started here: "
 "%s"
 msgstr ""
-"Ups! Nechali ste niečo vo svojom košíku! Tu môžete dokončiť to, čo ste "
-"začali: %s"
+"Ups! Nechali ste nieco vo svojom kosiku! Tu mozete dokoncit to, co ste "
+"zacali: %s"
 
-#: sinhro-sms-integration.php:133
+#: sinhro-sms-integration.php:132
 #, php-format
 msgid "Hey %s, get %d%% OFF your purchase. Hurry, before it expires: %s"
 msgstr ""
-"Dobrý deň %s, získajte ZĽAVU %d%% na váš nákup. Poponáhľajte sa, kým "
-"nevyprší jej platnosť: %s"
+"Dobry den %s, ziskajte ZLAVU %d%% na vas nakup. Poponahlajte sa, kym "
+"nevyprsi jej platnost: %s"
 
-#: sinhro-sms-integration.php:297
+#: sinhro-sms-integration.php:351
 msgid "Success. Test SMS sent!"
 msgstr ""
 
-#: sinhro-sms-integration.php:304
+#: sinhro-sms-integration.php:358
 msgid "Error. Test SMS failed to send!"
 msgstr ""
 
-#: sinhro-sms-integration.php:321
+#: sinhro-sms-integration.php:375
 msgid ""
 "There has been an error when trying to send a test SMS. Please make sure all "
 "test SMS fields are filled in before attempting to send!"
 msgstr ""
 
-#: sinhro-sms-integration.php:346
+#: sinhro-sms-integration.php:399
 msgid "Sinhro Sms Integration"
 msgstr ""

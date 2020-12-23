@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sinhro Sms Integration\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-21 12:15+0100\n"
+"POT-Creation-Date: 2020-12-23 09:46+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Mirza Pandzo <mpandzo@gmail.com>\n"
 "Language-Team: Mirza Pandzo <mpandzo@gmail.com>\n"
@@ -119,27 +119,27 @@ msgstr ""
 "Ups! Du hast etwas in deinem Einkaufswagen vergessen! Hier kannst du "
 "beenden, was du begonnen hast: %s"
 
-#: sinhro-sms-integration.php:133
+#: sinhro-sms-integration.php:132
 #, php-format
 msgid "Hey %s, get %d%% OFF your purchase. Hurry, before it expires: %s"
 msgstr ""
 "Hey %s, erhalte %d%% RABATT auf deinen Einkauf. Beeile dich, bevor das "
-"Angebot abläuft: %s"
+"Angebot ablauft: %s"
 
-#: sinhro-sms-integration.php:297
+#: sinhro-sms-integration.php:351
 msgid "Success. Test SMS sent!"
 msgstr ""
 
-#: sinhro-sms-integration.php:304
+#: sinhro-sms-integration.php:358
 msgid "Error. Test SMS failed to send!"
 msgstr ""
 
-#: sinhro-sms-integration.php:321
+#: sinhro-sms-integration.php:375
 msgid ""
 "There has been an error when trying to send a test SMS. Please make sure all "
 "test SMS fields are filled in before attempting to send!"
 msgstr ""
 
-#: sinhro-sms-integration.php:346
+#: sinhro-sms-integration.php:399
 msgid "Sinhro Sms Integration"
 msgstr ""
