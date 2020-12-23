@@ -94,7 +94,9 @@ class SinhroSmsIntegration
         // process carts that have passed 15 minutes
         $results = $wpdb->get_results("SELECT * FROM $temp_cart_table_name WHERE sms_1_sent=0 AND created < DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND created > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
 
-        if ($results) {
+        error_log(serialize($results));
+
+        if ($results && !is_wp_error($results)) {
             foreach ($results as $result) {
                 if (function_exists("wc_get_cart_url")) {
                     $cart_url = wc_get_cart_url();
@@ -102,11 +104,10 @@ class SinhroSmsIntegration
                         $cart_url = get_option("ssi_api_cart_url_1");
                     }
 
-                    $response = $this->send_sms($result->phone, sprintf(esc_html__("Oops! You left something in your cart! You can finish what you started here: %s", "sinhro-sms-integration"), $cart_url), "");
+                    $response = $this->send_sms($result->phone, sprintf(esc_html__("Oops! You left something in your cart! You can finish what you started here: %s", "sinhro-sms-integration"), $cart_url));
 
-                    if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
+                    if (!is_wp_error($response) && $response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
                         error_log("Success, sms sent to $result->phone after 15 minutes");
-
                         $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_1_sent=1 WHERE id=%d", $result->id));
                     } else {
                         error_log("Error, sms sent not sent to $result->phone after 15 minutes");
@@ -132,7 +133,7 @@ class SinhroSmsIntegration
                     }
 
                     $sms_message = sprintf(esc_html__("Hey %s, get %d%% OFF your purchase. Hurry, before it expires: %s", "sinhro-sms-integration"), $customer_first_name, $discount_value, $cart_url);
-                    $response = $this->send_sms($result->phone, $sms_message, "");
+                    $response = $this->send_sms($result->phone, $sms_message);
 
                     if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
                         error_log("Success, sms sent to $result->phone after 24 hours");
@@ -330,7 +331,7 @@ class SinhroSmsIntegration
         return isset($lengths[$lcid]) ? $lengths[$lcid] : 8;
     }
 
-    public function send_sms($phone, $text, $override_host, $override_i18n = false)
+    public function send_sms($phone, $text, $override_host = "", $override_i18n = false)
     {
         $response = null;
 
@@ -344,6 +345,11 @@ class SinhroSmsIntegration
                 $country_code = $this->i18n_country_calling_code(get_locale());
                 if (substr($phone, 0, strlen($country_code)) == $country_code) {
                     $phone = substr($phone, strlen($country_code));
+                }
+
+                if (get_locale() == "bs_BA" && substr($phone, 0, 1) == "0") {
+                    // if a Bosnian number starts with 0 like 06112313, remove the 0
+                    $phone = substr($phone, 1);
                 }
 
                 $country_phone_length = $this->i18n_country_phone_length(get_locale());
@@ -363,6 +369,10 @@ class SinhroSmsIntegration
 
                     $api_host = isset($override_host) && !empty($override_host) ? sanitize_text_field($override_host) : "http://gw.sinhro.si/api/http";
 
+                    error_log("path 1");
+                    error_log(serialize($args));
+                    error_log($api_host);
+
                     $response = wp_remote_post($api_host, $args);
                 }
             } else {
@@ -380,6 +390,10 @@ class SinhroSmsIntegration
                 );
 
                 $api_host = isset($override_host) && !empty($override_host) ? sanitize_text_field($override_host) : "http://gw.sinhro.si/api/http";
+
+                error_log("path 2");
+                error_log(serialize($args));
+                error_log($api_host);
 
                 $response = wp_remote_post($api_host, $args);
             }
