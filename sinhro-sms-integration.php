@@ -94,8 +94,6 @@ class SinhroSmsIntegration
         // process carts that have passed 15 minutes
         $results = $wpdb->get_results("SELECT * FROM $temp_cart_table_name WHERE sms_1_sent=0 AND created < DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND created > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
 
-        error_log(serialize($results));
-
         if ($results && !is_wp_error($results)) {
             foreach ($results as $result) {
                 if (function_exists("wc_get_cart_url")) {
@@ -369,10 +367,6 @@ class SinhroSmsIntegration
 
                     $api_host = isset($override_host) && !empty($override_host) ? sanitize_text_field($override_host) : "http://gw.sinhro.si/api/http";
 
-                    error_log("path 1");
-                    error_log(serialize($args));
-                    error_log($api_host);
-
                     $response = wp_remote_post($api_host, $args);
                 }
             } else {
@@ -390,10 +384,6 @@ class SinhroSmsIntegration
                 );
 
                 $api_host = isset($override_host) && !empty($override_host) ? sanitize_text_field($override_host) : "http://gw.sinhro.si/api/http";
-
-                error_log("path 2");
-                error_log(serialize($args));
-                error_log($api_host);
 
                 $response = wp_remote_post($api_host, $args);
             }
