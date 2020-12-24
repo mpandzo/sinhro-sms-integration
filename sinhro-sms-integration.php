@@ -272,7 +272,7 @@ class SinhroSmsIntegration
         $codes = [
             "bg_BG" => "359",
             "bs_BA" => "387",
-            "cs_CZ" => "42",
+            "cs_CZ" => "420",
             "de_DE" => "49",
             "el" => "30",
             "es_ES" => "34",
