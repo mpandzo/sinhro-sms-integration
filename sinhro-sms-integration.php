@@ -24,9 +24,12 @@ if (!defined("SINHRO_SMS_REMINDER_MESSAGE")) {
 class SinhroSmsIntegration
 {
     private $plugin_name = "SinhroSmsIntegration";
+    private $plugin_log_file = "";
 
     public function __construct()
     {
+        $this->plugin_log_file = plugin_dir_path(__FILE__) . 'ssi-debug.log';
+
         // Check if WooCommerce is active
         require_once(ABSPATH . "/wp-admin/includes/plugin.php");
         if (!is_plugin_active("woocommerce/woocommerce.php") && !function_exists("WC")) {
@@ -105,20 +108,20 @@ class SinhroSmsIntegration
                     $response = $this->send_sms($result->phone, sprintf(esc_html__("Oops! You left something in your cart! You can finish what you started here: %s", "sinhro-sms-integration"), $cart_url));
 
                     if (!is_wp_error($response) && $response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
-                        error_log("Success, sms sent to $result->phone after 15 minutes");
+                        error_log("Success, sms sent to $result->phone after 15 minutes", 3, $this->plugin_log_file);
                         $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_1_sent=1 WHERE id=%d", $result->id));
                     } else {
                         $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_send_errors=sms_send_errors+1 WHERE id=%d", $result->id));
 
-                        error_log("Error, sms sent not sent to $result->phone after 15 minutes");
-                        error_log(serialize($response));
+                        error_log("Error, sms sent not sent to $result->phone after 15 minutes", 3, $this->plugin_log_file);
+                        error_log(serialize($response), 3, $this->plugin_log_file);
                     }
                 }
             }
         }
 
         // process carts that have passed 24 hours
-        $results = $wpdb->get_results("SELECT * FROM $temp_cart_table_name WHERE sms_2_sent=0 AND sms_send_failed < 3 AND created < DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+        $results = $wpdb->get_results("SELECT * FROM $temp_cart_table_name WHERE sms_2_sent=0 AND sms_send_errors < 3 AND created < DATE_SUB(NOW(), INTERVAL 24 HOUR)");
 
         if ($results) {
             foreach ($results as $result) {
@@ -136,13 +139,13 @@ class SinhroSmsIntegration
                     $response = $this->send_sms($result->phone, $sms_message);
 
                     if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
-                        error_log("Success, sms sent to $result->phone after 24 hours");
+                        error_log("Success, sms sent to $result->phone after 24 hours", 3, $this->plugin_log_file);
 
                         $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_2_sent=1 WHERE id=%d", $result->id));
                     } else {
                         $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_send_errors=sms_send_errors+1 WHERE id=%d", $result->id));
-                        error_log("Error, sms sent not sent to $result->phone after 24 hours");
-                        error_log(serialize($response));
+                        error_log("Error, sms sent not sent to $result->phone after 24 hours", 3, $this->plugin_log_file);
+                        error_log(serialize($response), 3, $this->plugin_log_file);
                     }
                 }
             }
@@ -229,7 +232,7 @@ class SinhroSmsIntegration
             ) $wcap_collate AUTO_INCREMENT=1 "
         );
 
-        $row = $wpdb->get_results("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = $temp_cart_table_name AND column_name = 'sms_send_errors'");
+        $row = $wpdb->get_results("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '$temp_cart_table_name' AND column_name = 'sms_send_errors'");
 
         if(empty($row)){
             $wpdb->query("ALTER TABLE $temp_cart_table_name ADD sms_send_errors INT(1) NOT NULL DEFAULT 0");
@@ -422,7 +425,7 @@ class SinhroSmsIntegration
 </div>
 <?php
             } else {
-                error_log(serialize($response)); ?>
+                error_log(serialize($response), 3, $this->plugin_log_file); ?>
 <div class="error notice">
   <p><?php _e("Error. Test SMS failed to send!", "sinhro-sms-integration"); ?>
   </p>
@@ -461,6 +464,8 @@ class SinhroSmsIntegration
     public function load_plugin_textdomain()
     {
         load_plugin_textdomain("sinhro-sms-integration", false, dirname(plugin_basename(__FILE__)) . "/languages");
+
+        $this->cart_process_sms();
     }
 
     public function admin_menu()
