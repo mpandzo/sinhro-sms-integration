@@ -129,6 +129,8 @@ class SinhroSmsIntegration
                     $customer_first_name = isset($result->first_name) ? $result->first_name : "";
                     $discount_value = get_option("ssi_api_discount_value") ? get_option("ssi_api_discount_value") : "20";
                     $cart_url = wc_get_cart_url();
+                    error_log("discount_value $discount_value", 3, $this->plugin_log_file);
+                    error_log("cart_url $cart_url", 3, $this->plugin_log_file);
                     $cart_url = add_query_arg("c", `${discount_value}off`, $cart_url);
 
                     if (!empty(get_option("ssi_api_cart_url_2"))) {
