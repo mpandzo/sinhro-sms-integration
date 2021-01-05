@@ -92,7 +92,7 @@ class SinhroSmsIntegration
         $temp_cart_table_name = $wpdb->prefix . "ssi_temp_cart";
 
         // process carts that have passed 15 minutes
-        $results = $wpdb->get_results("SELECT * FROM $temp_cart_table_name WHERE sms_1_sent=0 AND created < DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND created > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+        $results = $wpdb->get_results("SELECT * FROM $temp_cart_table_name WHERE sms_1_sent=0 AND sms_send_errors < 3 AND created < DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND created > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
 
         if ($results && !is_wp_error($results)) {
             foreach ($results as $result) {
@@ -108,6 +108,8 @@ class SinhroSmsIntegration
                         error_log("Success, sms sent to $result->phone after 15 minutes");
                         $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_1_sent=1 WHERE id=%d", $result->id));
                     } else {
+                        $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_send_errors=sms_send_errors+1 WHERE id=%d", $result->id));
+
                         error_log("Error, sms sent not sent to $result->phone after 15 minutes");
                         error_log(serialize($response));
                     }
@@ -116,7 +118,7 @@ class SinhroSmsIntegration
         }
 
         // process carts that have passed 24 hours
-        $results = $wpdb->get_results("SELECT * FROM $temp_cart_table_name WHERE sms_2_sent=0 AND created < DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+        $results = $wpdb->get_results("SELECT * FROM $temp_cart_table_name WHERE sms_2_sent=0 AND sms_send_failed < 3 AND created < DATE_SUB(NOW(), INTERVAL 24 HOUR)");
 
         if ($results) {
             foreach ($results as $result) {
@@ -138,6 +140,7 @@ class SinhroSmsIntegration
 
                         $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_2_sent=1 WHERE id=%d", $result->id));
                     } else {
+                        $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_send_errors=sms_send_errors+1 WHERE id=%d", $result->id));
                         error_log("Error, sms sent not sent to $result->phone after 24 hours");
                         error_log(serialize($response));
                     }
@@ -175,7 +178,7 @@ class SinhroSmsIntegration
         $nonce_value = isset($_REQUEST["nonce"]) ? $_REQUEST["nonce"] : "";
         $phone = isset($_REQUEST["phone"]) ? sanitize_text_field($_REQUEST["phone"]) : "";
         $first_name = isset($_REQUEST["first_name"]) ? sanitize_text_field($_REQUEST["first_name"]) : "";
-        $unique_cart_id = isset($_REQUEST["unique_cart_id"]) ? $_REQUEST["unique_cart_id"] : "";
+        $unique_cart_id = isset($_REQUEST["unique_cart_id"]) ? sanitize_text_field($_REQUEST["unique_cart_id"]) : "";
 
         if (wp_verify_nonce($nonce_value, "woocommerce-process_checkout")) {
             // nonce passed, we can record the phone number and cart unique id
@@ -225,6 +228,12 @@ class SinhroSmsIntegration
               PRIMARY KEY  (`id`)
             ) $wcap_collate AUTO_INCREMENT=1 "
         );
+
+        $row = $wpdb->get_results("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = $temp_cart_table_name AND column_name = 'sms_send_errors'");
+
+        if(empty($row)){
+            $wpdb->query("ALTER TABLE $temp_cart_table_name ADD sms_send_errors INT(1) NOT NULL DEFAULT 0");
+        }
     }
 
     public function plugin_deactivate()
