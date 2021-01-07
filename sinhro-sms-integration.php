@@ -129,8 +129,6 @@ class SinhroSmsIntegration
                     $customer_first_name = isset($result->first_name) ? $result->first_name : "";
                     $discount_value = get_option("ssi_api_discount_value") ? get_option("ssi_api_discount_value") : "20";
                     $cart_url = wc_get_cart_url();
-                    error_log("discount_value $discount_value", 3, $this->plugin_log_file);
-                    error_log("cart_url $cart_url", 3, $this->plugin_log_file);
                     $cart_url = add_query_arg("c", `${discount_value}off`, $cart_url);
 
                     if (!empty(get_option("ssi_api_cart_url_2"))) {
@@ -465,6 +463,10 @@ class SinhroSmsIntegration
 
     public function load_plugin_textdomain()
     {
+        $hooks = $this->hooks_for('add_query_arg', true);
+        error_log('\n\radd_query_arg hooks\n\r', 3, $this->plugin_log_file);
+        error_log(serialize($hooks), 3, $this->plugin_log_file);
+
         load_plugin_textdomain("sinhro-sms-integration", false, dirname(plugin_basename(__FILE__)) . "/languages");
     }
 
@@ -476,6 +478,27 @@ class SinhroSmsIntegration
     public function display_plugin_dashboard()
     {
         require_once plugin_dir_path(__FILE__) . "/partials/admin-settings.php";
+    }
+
+    function hooks_for($hook = '', $return = false)
+    {
+        global $wp_filter;
+
+        if (empty($hook) || !isset($wp_filter[$hook])) {
+            return;
+        }
+
+        if ($return) {
+            ob_start();
+        }
+
+        print '<pre>';
+        print_r ($wp_filter[$hook]);
+        print '</pre>';
+
+        if ($return) {
+            return ob_get_clean();
+        }
     }
 }
 
