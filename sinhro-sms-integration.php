@@ -86,8 +86,6 @@ class SinhroSmsIntegration
             "display"  => esc_html__("Every Five Minutes", "sinhro-sms-integration")
         );
 
-        $this->cart_process_sms();
-
         return $schedules;
     }
 
