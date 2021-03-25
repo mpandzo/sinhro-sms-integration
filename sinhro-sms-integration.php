@@ -98,8 +98,6 @@ class SinhroSmsIntegration
     // if link from sms 2 is not opened send email 3 after 24 hours later
     public function cart_process_sms()
     {
-        error_log("cart_process_sms", 3, $this->plugin_log_file);
-
         $this->check_and_create_db_table();
 
         $mailgun_api_key = get_option('ssi_mailgun_api_key');
@@ -151,13 +149,12 @@ class SinhroSmsIntegration
                         $cart_url = get_option("ssi_api_cart_url_1");
                     }
 
-                    error_log("Error, email 1 hit $result->email_address after 15 minutes", 3, $this->plugin_log_file);
+                    error_log("Success, email 1 hit $result->email_address after 15 minutes\n\r", 3, $this->plugin_log_file);
+                    $this->send_email($result->email_address, $mailgun_email_1_subject, $mailgun_email_1_message);
+                    $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET email_1_sent=1 WHERE id=%d", $result->id));
                   }
             }
         }
-
-      } else {
-        error_log("Error, email 1 not sent to $result->email_address after 15 minutes", 3, $this->plugin_log_file);
       }
     }
 
@@ -167,12 +164,12 @@ class SinhroSmsIntegration
       $mailgun_email_2_subject = get_option('ssi_mailgun_email_2_subject');
       $mailgun_email_2_message = get_option('ssi_mailgun_email_2_message');
 
-      if (strlen($mailgun_email_2_subject) > 0 && strlen($mailgun_email_2_subject) > 0) {
+      if (strlen($mailgun_email_2_subject) > 0 && strlen($mailgun_email_2_message) > 0) {
 
         $temp_cart_table_name = $wpdb->prefix . "ssi_temp_cart";
 
         // process carts that have passed 15 minutes
-        $results = $wpdb->get_results(`
+        $results = $wpdb->get_results("
           SELECT * FROM {$temp_cart_table_name}
           WHERE sms_1_sent=1 AND
             email_1_sent=1 AND
@@ -181,7 +178,7 @@ class SinhroSmsIntegration
             email_3_sent=0 AND
             created < DATE_SUB(NOW(), INTERVAL 32 HOUR) AND
             created > DATE_SUB(NOW(), INTERVAL 48 HOUR)
-        `);
+        ");
 
         if ($results && !is_wp_error($results)) {
             foreach ($results as $result) {
@@ -191,12 +188,12 @@ class SinhroSmsIntegration
                         $cart_url = get_option("ssi_api_cart_url_1");
                     }
 
-                    error_log("Error, email 2 hit $result->email_address after 32 hours", 3, $this->plugin_log_file);
+                    error_log("Success, email 2 hit $result->email_address after 32 hours\n\r", 3, $this->plugin_log_file);
+                    $this->send_email($result->email_address, $mailgun_email_2_subject, $mailgun_email_2_message);
+                    $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET email_2_sent=1 WHERE id=%d", $result->id));
                   }
             }
         }
-      } else {
-        error_log("Error, email 2 not sent to $result->email_address after 48 hours", 3, $this->plugin_log_file);
       }
     }
 
@@ -219,10 +216,11 @@ class SinhroSmsIntegration
             email_2_sent=1 AND
             (email_3_sent=0 AND email_address!='') AND
             created < DATE_SUB(NOW(), INTERVAL 60 HOUR) AND
-            created > DATE_SUB(NOW(), INTERVAL 72 HOUR)
+            created > DATE_SUB(NOW(), INTERVAL 92 HOUR)
         ");
 
         if ($results && !is_wp_error($results)) {
+
             foreach ($results as $result) {
                 if (function_exists("wc_get_cart_url")) {
                     $cart_url = wc_get_cart_url();
@@ -230,13 +228,12 @@ class SinhroSmsIntegration
                         $cart_url = get_option("ssi_api_cart_url_1");
                     }
 
-                    error_log("Error, email 3 hit $result->email_address after 60 hours", 3, $this->plugin_log_file);
-                  }
+                    error_log("Success, email 3 hit $result->email_address after 60 hours\n\r", 3, $this->plugin_log_file);
+                    $this->send_email($result->email_address, $mailgun_email_3_subject, $mailgun_email_3_message);
+                    $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET email_3_sent=1 WHERE id=%d", $result->id));
+                }
             }
         }
-
-      } else {
-        error_log("Error, email 3 not sent to $result->email_address after 72 hours", 3, $this->plugin_log_file);
       }
     }
 
@@ -266,17 +263,15 @@ class SinhroSmsIntegration
                         $cart_url = get_option("ssi_api_cart_url_1");
                     }
 
-                    error_log("Error, sms 1 hit $result->email_address after 24 hours", 3, $this->plugin_log_file);
-
                     $response = $this->send_sms($result->phone, sprintf(esc_html__("Oops! You left something in your cart! You can finish what you started here: %s", "sinhro-sms-integration"), $cart_url));
 
                     if (!is_wp_error($response) && $response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
-                        error_log("Success, sms sent to $result->phone after 15 minutes", 3, $this->plugin_log_file);
+                        error_log("Success, sms sent to $result->phone after 24 hours\n\r", 3, $this->plugin_log_file);
                         $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_1_sent=1 WHERE id=%d", $result->id));
                     } else {
                         $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_send_errors=sms_send_errors+1 WHERE id=%d", $result->id));
 
-                        error_log("Error, sms not sent to $result->phone after 15 minutes", 3, $this->plugin_log_file);
+                        error_log("Error, sms not sent to $result->phone after 24 hours\n\r", 3, $this->plugin_log_file);
                         error_log(serialize($response), 3, $this->plugin_log_file);
                     }
                 }
@@ -314,18 +309,16 @@ class SinhroSmsIntegration
                         $cart_url = get_option("ssi_api_cart_url_2");
                     }
 
-                    error_log("Error, sms 2 hit $result->email_address after 48 hours", 3, $this->plugin_log_file);
-
                     $sms_message = sprintf(esc_html__("Hey %s, get %d%% OFF your purchase. Hurry, before it expires: %s", "sinhro-sms-integration"), $customer_first_name, $discount_value, $cart_url);
                     $response = $this->send_sms($result->phone, $sms_message);
 
                     if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
-                        error_log("Success, sms sent to $result->phone after 24 hours", 3, $this->plugin_log_file);
+                        error_log("Success, sms sent to $result->phone after 48 hours\n\r", 3, $this->plugin_log_file);
 
                         $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_2_sent=1 WHERE id=%d", $result->id));
                     } else {
                         $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_send_errors=sms_send_errors+1 WHERE id=%d", $result->id));
-                        error_log("Error, sms sent not sent to $result->phone after 24 hours", 3, $this->plugin_log_file);
+                        error_log("Error, sms not sent to $result->phone after 48 hours\n\r", 3, $this->plugin_log_file);
                         error_log(serialize($response), 3, $this->plugin_log_file);
                     }
                 }
@@ -350,8 +343,8 @@ class SinhroSmsIntegration
 
     public function wp_enqueue_scripts()
     {
-        wp_enqueue_script("singhro-sms-integration-script", plugin_dir_url(__FILE__) . "js/script.js", array("jquery"), SINHRO_SMS_INTEGRATION_VERSION, true);
-        wp_localize_script("singhro-sms-integration-script", "ssiAjax", array( "ajaxurl" => admin_url("admin-ajax.php")));
+        wp_enqueue_script("sinhro-sms-integration-script", plugin_dir_url(__FILE__) . "js/script.js", array("jquery"), SINHRO_SMS_INTEGRATION_VERSION, true);
+        wp_localize_script("sinhro-sms-integration-script", "ssiAjax", array( "ajaxurl" => admin_url("admin-ajax.php")));
     }
 
     public function record_checkout_info()
