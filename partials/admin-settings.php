@@ -9,6 +9,9 @@ defined( "ABSPATH" ) || exit; // Exit if accessed directly
 
         <table class="form-table">
             <tr valign="top">
+              <td style="padding: 10px 0;margin: 0;" colspan="2"><h2 style="padding: 0;margin: 0;"><?php esc_html_e("Sms settings", "sinhro-sms-integration"); ?></h2></td>
+            </tr>
+            <tr valign="top">
                 <th scope="row">
                     <?php esc_html_e("Api host", "sinhro-sms-integration"); ?><br />
                     <small><?php esc_html_e("Override default host", "sinhro-sms-integration"); ?></small>
@@ -65,6 +68,90 @@ defined( "ABSPATH" ) || exit; // Exit if accessed directly
                 <td>
                     <input type="password" name="ssi_api_password" value="<?php echo esc_attr(get_option("ssi_api_password")); ?>" />
                     <small><?php esc_html_e("Your gw.sinhro.si API password", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+            <tr valign="top">
+              <td style="padding: 10px 0;margin: 0;" colspan="2"><h2 style="padding: 0;margin: 0;"><?php esc_html_e("Email settings", "sinhro-sms-integration"); ?></h2></td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Mailgun api key", "sinhro-sms-integration"); ?><br />
+                </th>
+                <td>
+                    <input type="text" name="ssi_mailgun_api_key" value="<?php echo esc_attr(get_option("ssi_mailgun_api_key")); ?>" />
+                    <small><?php esc_html_e("Your mailgun API key", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Mailgun api domain", "sinhro-sms-integration"); ?><br />
+                </th>
+                <td>
+                    <input type="text" name="ssi_mailgun_api_domain" value="<?php echo esc_attr(get_option("ssi_mailgun_api_domain")); ?>" />
+                    <small><?php esc_html_e("Your mailgun API domain", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Mailgun from address", "sinhro-sms-integration"); ?><br />
+                </th>
+                <td>
+                    <input type="text" name="ssi_mailgun_from_address" value="<?php echo esc_attr(get_option("ssi_mailgun_from_address")); ?>" />
+                    <small><?php esc_html_e("Your mailgun configured from email address", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Mailgun first email subject", "sinhro-sms-integration"); ?><br />
+                </th>
+                <td>
+                    <input type="text" name="ssi_mailgun_email_1_subject" value="<?php echo esc_attr(get_option("ssi_mailgun_email_1_subject")); ?>" />
+                    <small><?php esc_html_e("The first email subject", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Mailgun first email message", "sinhro-sms-integration"); ?><br />
+                </th>
+                <td>
+                    <textarea rows="5" cols="50" name="ssi_mailgun_email_1_message"><?php echo esc_attr(get_option("ssi_mailgun_email_1_message")); ?></textarea>
+                    <small><?php esc_html_e("The first email message", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Mailgun second email subject", "sinhro-sms-integration"); ?><br />
+                </th>
+                <td>
+                    <input type="text" name="ssi_mailgun_email_2_subject" value="<?php echo esc_attr(get_option("ssi_mailgun_email_2_subject")); ?>" />
+                    <small><?php esc_html_e("The second email subject", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Mailgun second email message", "sinhro-sms-integration"); ?><br />
+                </th>
+                <td>
+                    <textarea rows="5" cols="50" name="ssi_mailgun_email_2_message"><?php echo esc_attr(get_option("ssi_mailgun_email_2_message")); ?></textarea>
+                    <small><?php esc_html_e("The second email message", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Mailgun third email subject", "sinhro-sms-integration"); ?><br />
+                </th>
+                <td>
+                    <input type="text" name="ssi_mailgun_email_3_subject" value="<?php echo esc_attr(get_option("ssi_mailgun_email_3_subject")); ?>" />
+                    <small><?php esc_html_e("The third email subject", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Mailgun third email message", "sinhro-sms-integration"); ?><br />
+                </th>
+                <td>
+                    <textarea rows="5" cols="50" name="ssi_mailgun_email_3_message"><?php echo esc_attr(get_option("ssi_mailgun_email_3_message")); ?></textarea>
+                    <small><?php esc_html_e("The third email message", "sinhro-sms-integration"); ?></small>
                 </td>
             </tr>
         </table>
