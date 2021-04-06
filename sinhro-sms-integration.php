@@ -4,18 +4,17 @@ Plugin Name:  Sinhro Sms Integration
 Plugin URI:   https://github.com/mpandzo/sinhro-sms-integration
 Description:  A WordPress plugin that allows integration with the http://gw.sinhro.si/api/http api for sending SMSs
 Version:      1.0.1
-Author:       mpandzo
-Author URI:   https://mthit.com
+Author:       adstar
+Author URI:   https://adstar-agency.com
 License:      MIT License
 */
 
-namespace MPandzo\SinhroSmsIntegration;
-
-# Include the Autoloader (see "Libraries" for install instructions)
-require 'mailgun/vendor/autoload.php';
-use Mailgun\Mailgun;
+namespace Adstar\SinhroSmsIntegration;
 
 defined("ABSPATH") || exit; // Exit if accessed directly
+
+# Include the Autoloader (see "Libraries" for install instructions)
+require 'mandrill/vendor/autoload.php';
 
 if (!defined("SINHRO_SMS_INTEGRATION_VERSION")) {
     define("SINHRO_SMS_INTEGRATION_VERSION", "1.0.2");
@@ -98,22 +97,21 @@ class SinhroSmsIntegration
     {
         $this->check_and_create_db_table();
 
-        $mailgun_api_key = get_option('ssi_mailgun_api_key');
-        $mailgun_api_domain = get_option('ssi_mailgun_api_domain');
+        $mandrill_api_key = get_option('ssi_mandrill_api_key');
 
-        if (strlen($mailgun_api_key) > 0 && strlen($mailgun_api_domain) > 0) {
+        if (strlen($mandrill_api_key) > 0) {
           $this->step_1_email();
         }
 
         $this->step_1_sms();
 
-        if (strlen($mailgun_api_key) > 0 && strlen($mailgun_api_domain) > 0) {
+        if (strlen($mandrill_api_key) > 0) {
           $this->step_2_email();
         }
 
         $this->step_2_sms();
 
-        if (strlen($mailgun_api_key) > 0 && strlen($mailgun_api_domain) > 0) {
+        if (strlen($mandrill_api_key) > 0) {
           $this->step_3_email();
         }
     }
@@ -121,10 +119,10 @@ class SinhroSmsIntegration
     public function step_1_email() {
       global $wpdb;
 
-      $mailgun_email_1_subject = get_option('ssi_mailgun_email_1_subject');
-      $mailgun_email_1_message = get_option('ssi_mailgun_email_1_message');
+      $mandrill_email_1_subject = get_option('ssi_mandrill_email_1_subject');
+      $mandrill_email_1_message = get_option('ssi_mandrill_email_1_message');
 
-      if (strlen($mailgun_email_1_subject) > 0 && strlen($mailgun_email_1_message) > 0) {
+      if (strlen($mandrill_email_1_subject) > 0 && strlen($mandrill_email_1_message) > 0) {
 
         $temp_cart_table_name = $wpdb->prefix . "ssi_temp_cart";
 
@@ -148,7 +146,7 @@ class SinhroSmsIntegration
                     }
 
                     error_log("Success, email 1 hit $result->email_address after 15 minutes\n\r", 3, $this->plugin_log_file);
-                    $this->send_email($result->email_address, $mailgun_email_1_subject, $mailgun_email_1_message);
+                    $this->send_email($result->email_address, $mandrill_email_1_subject, $mandrill_email_1_message);
                     $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET email_1_sent=1 WHERE id=%d", $result->id));
                   }
             }
@@ -159,10 +157,10 @@ class SinhroSmsIntegration
     public function step_2_email() {
       global $wpdb;
 
-      $mailgun_email_2_subject = get_option('ssi_mailgun_email_2_subject');
-      $mailgun_email_2_message = get_option('ssi_mailgun_email_2_message');
+      $mandrill_email_2_subject = get_option('ssi_mandrill_email_2_subject');
+      $mandrill_email_2_message = get_option('ssi_mandrill_email_2_message');
 
-      if (strlen($mailgun_email_2_subject) > 0 && strlen($mailgun_email_2_message) > 0) {
+      if (strlen($mandrill_email_2_subject) > 0 && strlen($mandrill_email_2_message) > 0) {
 
         $temp_cart_table_name = $wpdb->prefix . "ssi_temp_cart";
 
@@ -187,7 +185,7 @@ class SinhroSmsIntegration
                     }
 
                     error_log("Success, email 2 hit $result->email_address after 32 hours\n\r", 3, $this->plugin_log_file);
-                    $this->send_email($result->email_address, $mailgun_email_2_subject, $mailgun_email_2_message);
+                    $this->send_email($result->email_address, $mandrill_email_2_subject, $mandrill_email_2_message);
                     $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET email_2_sent=1 WHERE id=%d", $result->id));
                   }
             }
@@ -198,10 +196,10 @@ class SinhroSmsIntegration
     public function step_3_email() {
       global $wpdb;
 
-      $mailgun_email_3_subject = get_option('ssi_mailgun_email_3_subject');
-      $mailgun_email_3_message = get_option('ssi_mailgun_email_3_message');
+      $mandrill_email_3_subject = get_option('ssi_mandrill_email_3_subject');
+      $mandrill_email_3_message = get_option('ssi_mandrill_email_3_message');
 
-      if (strlen($mailgun_email_3_subject) > 0 && strlen($mailgun_email_3_message) > 0) {
+      if (strlen($mandrill_email_3_subject) > 0 && strlen($mandrill_email_3_message) > 0) {
 
         $temp_cart_table_name = $wpdb->prefix . "ssi_temp_cart";
 
@@ -227,7 +225,7 @@ class SinhroSmsIntegration
                     }
 
                     error_log("Success, email 3 hit $result->email_address after 60 hours\n\r", 3, $this->plugin_log_file);
-                    $this->send_email($result->email_address, $mailgun_email_3_subject, $mailgun_email_3_message);
+                    $this->send_email($result->email_address, $mandrill_email_3_subject, $mandrill_email_3_message);
                     $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET email_3_sent=1 WHERE id=%d", $result->id));
                 }
             }
@@ -512,18 +510,26 @@ class SinhroSmsIntegration
         return isset($lengths[$lcid]) ? $lengths[$lcid] : 8;
     }
 
-    public function send_email($to_email, $email_subject, $email_message) {
-        // First, instantiate the SDK with your API credentials
-        $mg = Mailgun::create(get_option("ssi_mailgun_api_key")); // For EU servers
+    public function send_email($to_email_address, $email_subject, $email_message) {
 
-        // Now, compose and send your message.
-        // $mg->messages()->send($domain, $params);
-        $mg->messages()->send(get_option("ssi_mailgun_api_domain"), [
-          'from'    => get_option("ssi_mailgun_from_address"),
-          'to'      => $to_email,
-          'subject' => $email_subject,
-          'text'    => $email_message
-        ]);
+        $mandrill_api_key = get_option("ssi_mandrill_api_key");
+        $from_email_address = get_option("ssi_mandrill_from_address");
+
+        if (strlen($mandrill_api_key) > 0 && strlen($from_email_address) > 0) {
+          $mailchimp = new MailchimpTransactional\ApiClient();
+          $mailchimp->setApiKey($mandrill_api_key);
+
+          $response = $mailchimp->messages->send(["message" => [
+            "subject" => $email_subject,
+            "text" => $email_message,
+            "from_email" => $from_email_address,
+            "to" => [
+              "email" => $to_email_address
+            ],
+            "auto_html" => true,
+          ]]);
+          error_log($response);
+        }
     }
 
     public function send_sms($phone, $text, $override_host = "", $override_i18n = false)
@@ -654,15 +660,14 @@ class SinhroSmsIntegration
         register_setting("sinhro-sms-integration-settings", "ssi_api_password");
         register_setting("sinhro-sms-integration-settings", "ssi_api_cart_url_1");
         register_setting("sinhro-sms-integration-settings", "ssi_api_cart_url_2");
-        register_setting("sinhro-sms-integration-settings", "ssi_mailgun_api_key");
-        register_setting("sinhro-sms-integration-settings", "ssi_mailgun_api_domain");
-        register_setting("sinhro-sms-integration-settings", "ssi_mailgun_from_address");
-        register_setting("sinhro-sms-integration-settings", "ssi_mailgun_email_1_subject");
-        register_setting("sinhro-sms-integration-settings", "ssi_mailgun_email_1_message");
-        register_setting("sinhro-sms-integration-settings", "ssi_mailgun_email_2_subject");
-        register_setting("sinhro-sms-integration-settings", "ssi_mailgun_email_2_message");
-        register_setting("sinhro-sms-integration-settings", "ssi_mailgun_email_3_subject");
-        register_setting("sinhro-sms-integration-settings", "ssi_mailgun_email_3_message");
+        register_setting("sinhro-email-integration-settings", "ssi_mandrill_api_key");
+        register_setting("sinhro-email-integration-settings", "ssi_mandrill_from_address");
+        register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_1_subject");
+        register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_1_message");
+        register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_2_subject");
+        register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_2_message");
+        register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_3_subject");
+        register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_3_message");
     }
 
     public function load_plugin_textdomain()
