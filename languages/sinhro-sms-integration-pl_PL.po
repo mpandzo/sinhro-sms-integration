@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sinhro Integration\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-21 12:16+0100\n"
+"POT-Creation-Date: 2021-04-08 02:15+1000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Mirza Pandzo <mpandzo@gmail.com>\n"
 "Language-Team: Mirza Pandzo <mpandzo@gmail.com>\n"
@@ -10,7 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.3\n"
+"X-Generator: Poedit 2.4.2\n"
 "X-Poedit-KeywordsList: _e;__;esc_attr_e;esc_attr__;esc_html_e;esc_html__;_x\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -18,100 +18,315 @@ msgstr ""
 "|| n%100>14) ? 1 : 2);\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: partials/admin-settings.php:5
-msgid "Sinhro Integration settings"
+#: lib/class-abandoned-carts-table.php:124
+msgid "Id"
 msgstr ""
 
-#: partials/admin-settings.php:13
-msgid "Api host"
+#: lib/class-abandoned-carts-table.php:125
+msgid "Created"
+msgstr ""
+
+#: lib/class-abandoned-carts-table.php:126
+msgid "Email 1"
+msgstr ""
+
+#: lib/class-abandoned-carts-table.php:127
+msgid "Email 2"
+msgstr ""
+
+#: lib/class-abandoned-carts-table.php:128
+msgid "Email 3"
+msgstr ""
+
+#: lib/class-abandoned-carts-table.php:129
+msgid "Sms 1"
+msgstr ""
+
+#: lib/class-abandoned-carts-table.php:130
+msgid "Sms 2"
+msgstr ""
+
+#: lib/class-abandoned-carts-table.php:131
+msgid "Sms Errors"
+msgstr ""
+
+#: lib/class-abandoned-carts-table.php:132
+msgid "Phone"
+msgstr ""
+
+#: lib/class-abandoned-carts-table.php:133
+msgid "Email"
+msgstr ""
+
+#: lib/class-abandoned-carts-table.php:134
+msgid "First Name"
 msgstr ""
 
 #: partials/admin-settings.php:14
-msgid "Override default host"
+msgid "Sinhro Integration settings"
 msgstr ""
 
 #: partials/admin-settings.php:18
-msgid "Default: http://gw.sinhro.si/api/http"
+msgid "Sending times"
+msgstr ""
+
+#: partials/admin-settings.php:19 partials/admin-settings.php:97
+msgid "Sms settings"
+msgstr ""
+
+#: partials/admin-settings.php:20
+msgid "Test sms"
+msgstr ""
+
+#: partials/admin-settings.php:21 partials/admin-settings.php:150
+msgid "Email settings"
+msgstr ""
+
+#: partials/admin-settings.php:22
+msgid "Test email"
 msgstr ""
 
 #: partials/admin-settings.php:23
-msgid "Discount value override"
-msgstr ""
-
-#: partials/admin-settings.php:24
-msgid "Override default discount value"
-msgstr ""
-
-#: partials/admin-settings.php:28
-msgid "Default: 20"
+msgid "Browse abandoned carts"
 msgstr ""
 
 #: partials/admin-settings.php:33
-msgid "First sms cart url"
+msgid "Sending time settings"
 msgstr ""
 
-#: partials/admin-settings.php:34
-msgid "Override default first sms cart url (woocommerce cart url)"
+#: partials/admin-settings.php:37
+msgid "Email 1 time"
 msgstr ""
 
 #: partials/admin-settings.php:38
-msgid "Default: http://yourdomain.com/cart"
+msgid "Time in minutes after cart is abandoned that we send the first email"
 msgstr ""
 
-#: partials/admin-settings.php:43
-msgid "Second sms cart url"
+#: partials/admin-settings.php:42
+msgid "Default: 15"
 msgstr ""
 
-#: partials/admin-settings.php:44
-msgid "Override default second cart url (woocommerce cart url)"
+#: partials/admin-settings.php:47
+msgid "Sms 1 time"
 msgstr ""
 
 #: partials/admin-settings.php:48
-#, php-format
-msgid "Default: http://yourdomain.com/cart?c=%s"
+msgid "Time in minutes after cart is abandoned that we send the first sms"
 msgstr ""
 
-#: partials/admin-settings.php:54
-msgid "Api username"
+#: partials/admin-settings.php:52
+msgid "Default: 1440 - ie 24 hours (60x24)"
+msgstr ""
+
+#: partials/admin-settings.php:57
+msgid "Email 2 time"
 msgstr ""
 
 #: partials/admin-settings.php:58
-msgid "Your gw.sinhro.si API username"
+msgid "Time in minutes after cart is abandoned that we send the second email"
 msgstr ""
 
-#: partials/admin-settings.php:63
-msgid "Api password"
+#: partials/admin-settings.php:62
+msgid "Default: 1920 - ie 32 hours (60x32)"
 msgstr ""
 
 #: partials/admin-settings.php:67
-msgid "Your gw.sinhro.si API password"
+msgid "Sms 2 time"
+msgstr ""
+
+#: partials/admin-settings.php:68
+msgid "Time in minutes after cart is abandoned that we send the second sms"
+msgstr ""
+
+#: partials/admin-settings.php:72
+msgid "Default: 2880 - ie 48 hours (60x48)"
+msgstr ""
+
+#: partials/admin-settings.php:77
+msgid "Email 3 time"
 msgstr ""
 
 #: partials/admin-settings.php:78
-msgid "Send test sms"
+msgid "Time in minutes after cart is abandoned that we send the third email"
 msgstr ""
 
 #: partials/admin-settings.php:82
+msgid "Default: 3840 - ie 64 hours (60x64)"
+msgstr ""
+
+#: partials/admin-settings.php:101
+msgid "Api host"
+msgstr ""
+
+#: partials/admin-settings.php:102
+msgid "Override default host"
+msgstr ""
+
+#: partials/admin-settings.php:106
+msgid "Default: http://gw.sinhro.si/api/http"
+msgstr ""
+
+#: partials/admin-settings.php:112
+msgid "Api username"
+msgstr ""
+
+#: partials/admin-settings.php:116
+msgid "Your gw.sinhro.si API username"
+msgstr ""
+
+#: partials/admin-settings.php:121
+msgid "Api password"
+msgstr ""
+
+#: partials/admin-settings.php:125
+msgid "Your gw.sinhro.si API password"
+msgstr ""
+
+#: partials/admin-settings.php:130
+msgid "Discount value override"
+msgstr ""
+
+#: partials/admin-settings.php:131
+msgid "Override default discount value"
+msgstr ""
+
+#: partials/admin-settings.php:135
+msgid "Default: 20"
+msgstr ""
+
+#: partials/admin-settings.php:154
+msgid "Mandrill api key"
+msgstr ""
+
+#: partials/admin-settings.php:158
+msgid "Your Mandrill API key"
+msgstr ""
+
+#: partials/admin-settings.php:163
+msgid "Mandrill from address"
+msgstr ""
+
+#: partials/admin-settings.php:167
+msgid "Your Mandrill from email address"
+msgstr ""
+
+#: partials/admin-settings.php:172
+msgid "Mandrill first email subject"
+msgstr ""
+
+#: partials/admin-settings.php:176
+msgid "The first email subject"
+msgstr ""
+
+#: partials/admin-settings.php:181
+msgid "Mandrill first email message"
+msgstr ""
+
+#: partials/admin-settings.php:185
+msgid "The first email message"
+msgstr ""
+
+#: partials/admin-settings.php:190
+msgid "Mandrill second email subject"
+msgstr ""
+
+#: partials/admin-settings.php:194
+msgid "The second email subject"
+msgstr ""
+
+#: partials/admin-settings.php:199
+msgid "Mandrill second email message"
+msgstr ""
+
+#: partials/admin-settings.php:203
+msgid "The second email message"
+msgstr ""
+
+#: partials/admin-settings.php:208
+msgid "Mandrill third email subject"
+msgstr ""
+
+#: partials/admin-settings.php:212
+msgid "The third email subject"
+msgstr ""
+
+#: partials/admin-settings.php:217
+msgid "Mandrill third email message"
+msgstr ""
+
+#: partials/admin-settings.php:221
+msgid "The third email message"
+msgstr ""
+
+#: partials/admin-settings.php:234
+msgid "Send test sms"
+msgstr ""
+
+#: partials/admin-settings.php:238
 msgid "Phone number"
 msgstr ""
 
-#: partials/admin-settings.php:86
+#: partials/admin-settings.php:242
 msgid "The phone number to send test SMS to with leading 0s, e.g. 003861234567"
 msgstr ""
 
-#: partials/admin-settings.php:91
+#: partials/admin-settings.php:247
 msgid "SMS message"
 msgstr ""
 
-#: partials/admin-settings.php:95
+#: partials/admin-settings.php:251
 msgid "Default: 12345"
 msgstr ""
 
-#: sinhro-sms-integration.php:79
+#: partials/admin-settings.php:258
+msgid ""
+"Please make sure your sinhro sms username and password are provided in the "
+"Sms settings tab!"
+msgstr ""
+
+#: partials/admin-settings.php:266
+msgid "Send test email"
+msgstr ""
+
+#: partials/admin-settings.php:270
+msgid "To email address"
+msgstr ""
+
+#: partials/admin-settings.php:274
+msgid "The email address to send the test message to"
+msgstr ""
+
+#: partials/admin-settings.php:279
+msgid "Email subject"
+msgstr ""
+
+#: partials/admin-settings.php:283
+msgid "The email test subject to send"
+msgstr ""
+
+#: partials/admin-settings.php:288
+msgid "Email message"
+msgstr ""
+
+#: partials/admin-settings.php:292
+msgid "The email test message to send"
+msgstr ""
+
+#: partials/admin-settings.php:299
+msgid ""
+"Please make sure your mandrill api key and from email address are provided "
+"in the Email settings tab!"
+msgstr ""
+
+#: partials/admin-settings.php:307
+msgid "Currently abandoned carts"
+msgstr ""
+
+#: sinhro-sms-integration.php:85
 msgid "Every Five Minutes"
 msgstr ""
 
-#: sinhro-sms-integration.php:103
+#: sinhro-sms-integration.php:171
 #, php-format
 msgid ""
 "Oops! You left something in your cart! You can finish what you started here: "
@@ -120,27 +335,31 @@ msgstr ""
 "Ups! Cos zostalo w twoim koszyku! Rozpoczete zakupy mozesz dokonczyc tutaj: "
 "%s"
 
-#: sinhro-sms-integration.php:133
+#: sinhro-sms-integration.php:203
 #, php-format
 msgid "Hey %s, get %d%% OFF your purchase. Hurry, before it expires: %s"
 msgstr ""
 "Hej %s, zyskaj %d%% RABATU na swoje zakupy. Pospiesz sie, promocja wkrotce "
 "sie skonczy: %s"
 
-#: sinhro-sms-integration.php:297
-msgid "Success. Test SMS sent!"
+#: sinhro-sms-integration.php:533
+msgid "Success: test message successfully sent!"
 msgstr ""
 
-#: sinhro-sms-integration.php:304
-msgid "Error. Test SMS failed to send!"
-msgstr ""
-
-#: sinhro-sms-integration.php:321
+#: sinhro-sms-integration.php:540 sinhro-sms-integration.php:591
 msgid ""
 "There has been an error when trying to send a test SMS. Please make sure all "
 "test SMS fields are filled in before attempting to send!"
 msgstr ""
 
-#: sinhro-sms-integration.php:346
+#: sinhro-sms-integration.php:577
+msgid "Success. Test SMS sent!"
+msgstr ""
+
+#: sinhro-sms-integration.php:583
+msgid "Error. Test SMS failed to send!"
+msgstr ""
+
+#: sinhro-sms-integration.php:643
 msgid "Sinhro Integration"
 msgstr ""
