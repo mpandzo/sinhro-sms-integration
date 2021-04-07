@@ -5,6 +5,8 @@ if ( ! current_user_can( 'manage_options' ) ) {
   return;
 }
 
+require_once(__DIR__ . "/../lib/class-abandoned-carts-table.php");
+
 //Get the active tab from the $_GET param
 $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
 ?>
@@ -297,9 +299,14 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
         <p><?php _e("Please make sure your mandrill api key and from email address are provided in the Email settings tab!", "sinhro-sms-integration"); ?></p>
       <?php } ?>
 
-    <?php } else if ($tab === "browse-abandoned-carts") { ?>
+    <?php } else if ($tab === "browse-abandoned-carts") {
+      $abandoned_cart_table = new Abandoned_Cart_Admin_List_Table();
+			$abandoned_cart_table->prepare_items();
+    ?>
 
       <h3><?php esc_html_e("Currently abandoned carts", "sinhro-sms-integration"); ?><h3>
+
+      <?php 			$abandoned_cart_table->display(); ?>
 
     <?php } ?>
 
