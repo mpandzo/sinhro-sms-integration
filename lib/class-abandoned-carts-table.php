@@ -165,7 +165,7 @@ class Abandoned_Cart_Admin_List_Table extends WP_List_Table {
 		global $wpdb, $_wp_column_headers;
 
 		$user = get_current_user_id();
-		$per_page = 1;
+		$per_page = 20;
 
 		$search_term = '';
 		if (!empty($_REQUEST['s'])) {
