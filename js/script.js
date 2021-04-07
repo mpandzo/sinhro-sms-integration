@@ -24,7 +24,7 @@
 
         if (nonce && phone && email && uniqueCartId && phonePattern.test(phone)) {
           var dataObj = {
-            'action': 'record_checkout_info',
+            'action': 'save_checkout_info',
             'nonce': nonce,
             'phone': phone,
             'email': email,

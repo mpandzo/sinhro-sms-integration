@@ -1,7 +1,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Sinhro Sms Integration\n"
+"Project-Id-Version: Sinhro Integration\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-12-21 12:17+0100\n"
 "Last-Translator: Mirza Pandzo <mpandzo@gmail.com>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 
 #: partials/admin-settings.php:5
-msgid "Sinhro Sms Integration settings"
+msgid "Sinhro Integration settings"
 msgstr ""
 
 #: partials/admin-settings.php:13
@@ -133,5 +133,5 @@ msgid "There has been an error when trying to send a test SMS. Please make sure 
 msgstr ""
 
 #: sinhro-sms-integration.php:346
-msgid "Sinhro Sms Integration"
+msgid "Sinhro Integration"
 msgstr ""

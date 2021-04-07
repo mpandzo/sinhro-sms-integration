@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Sinhro Sms Integration\n"
+"Project-Id-Version: Sinhro Integration\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-12-23 09:46+0100\n"
 "PO-Revision-Date: \n"
@@ -18,7 +18,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 
 #: partials/admin-settings.php:5
-msgid "Sinhro Sms Integration settings"
+msgid "Sinhro Integration settings"
 msgstr ""
 
 #: partials/admin-settings.php:13
@@ -141,5 +141,5 @@ msgid ""
 msgstr ""
 
 #: sinhro-sms-integration.php:399
-msgid "Sinhro Sms Integration"
+msgid "Sinhro Integration"
 msgstr ""
