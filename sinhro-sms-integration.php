@@ -90,27 +90,27 @@ class SinhroIntegration
 
     public function get_email_step_1_cart_entries($interval_minutes) {
       return $this->get_step_x_cart_entries(sprintf("(email_1_sent=0 AND email_address!='') AND email_2_sent=0 AND email_3_sent=0 AND
-        created < DATE_SUB(NOW(), INTERVAL 0 MINUTE) AND created > DATE_SUB(NOW(), INTERVAL %d MINUTE)", $interval_minutes));
+        created < DATE_SUB(NOW(), INTERVAL %d MINUTE)", $interval_minutes));
     }
 
     public function get_email_step_2_cart_entries($interval_minutes) {
       return $this->get_step_x_cart_entries(sprintf("email_1_sent=1 AND (email_2_sent=0 AND email_address!='') AND email_3_sent=0 AND
-        created < DATE_SUB(NOW(), INTERVAL 0 MINUTE) AND created > DATE_SUB(NOW(), INTERVAL %d MINUTE)", $interval_minutes));
+        created < DATE_SUB(NOW(), INTERVAL %d MINUTE)", $interval_minutes));
     }
 
     public function get_email_step_3_cart_entries($interval_minutes) {
       return $this->get_step_x_cart_entries(sprintf("email_1_sent=1 AND email_2_sent=1 AND (email_3_sent=0 AND email_address != '') AND
-        created < DATE_SUB(NOW(), INTERVAL 0 MINUTE) AND created > DATE_SUB(NOW(), INTERVAL %d MINUTE)", $interval_minutes));
+        created < DATE_SUB(NOW(), INTERVAL %d MINUTE)", $interval_minutes));
     }
 
     public function get_sms_step_1_cart_entries($interval_minutes) {
       return $this->get_step_x_cart_entries(sprintf("sms_1_sent=0 AND sms_send_errors < 3 AND
-        created < DATE_SUB(NOW(), INTERVAL 0 MINUTE) AND created > DATE_SUB(NOW(), INTERVAL %d MINUTE)", $interval_minutes));
+        created < DATE_SUB(NOW(), INTERVAL %d MINUTE)", $interval_minutes));
     }
 
     public function get_sms_step_2_cart_entries($interval_minutes) {
       return $this->get_step_x_cart_entries(sprintf("sms_1_sent=1 AND sms_2_sent=0 AND sms_send_errors < 3 AND
-        created < DATE_SUB(NOW(), INTERVAL 0 MINUTE) AND created > DATE_SUB(NOW(), INTERVAL %d MINUTE)", $interval_minutes));
+        created < DATE_SUB(NOW(), INTERVAL %d MINUTE)", $interval_minutes));
     }
 
     public function get_step_x_cart_entries($where_query) {
