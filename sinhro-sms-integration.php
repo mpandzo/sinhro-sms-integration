@@ -156,7 +156,11 @@ class SinhroIntegration
 
           if ($results && !is_wp_error($results) && count($results) > 0) {
             foreach ($results as $result) {
+              $cart_url = wc_get_cart_url();
+
+              $email_1_message = sprintf($email_1_message, $cart_url);
               $this->send_email($result->email_address, $email_1_subject, $email_1_message);
+
               $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET email_1_sent=1 WHERE id=%d", $result->id));
             }
           }
@@ -185,7 +189,14 @@ class SinhroIntegration
 
           if ($results && !is_wp_error($results) && count($results) > 0) {
             foreach ($results as $result) {
+              $cart_url = wc_get_cart_url();
+
+              $customer_first_name = isset($result->first_name) ? $result->first_name : "";
+              $discount_value = get_option("ssi_api_discount_value") ? get_option("ssi_api_discount_value") : "20";
+
+              $email_2_message = sprintf($email_2_message, $customer_first_name, $discount_value, $cart_url);
               $this->send_email($result->email_address, $email_2_subject, $email_2_message);
+
               $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET email_2_sent=1 WHERE id=%d", $result->id));
             }
           }
