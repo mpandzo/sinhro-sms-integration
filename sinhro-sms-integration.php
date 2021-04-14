@@ -157,6 +157,9 @@ class SinhroIntegration
           if ($results && !is_wp_error($results) && count($results) > 0) {
             foreach ($results as $result) {
               $cart_url = wc_get_cart_url();
+              if (!empty(get_option("ssi_mandrill_cart_url_1"))) {
+                $cart_url = get_option("ssi_mandrill_cart_url_1");
+              }
 
               $email_1_message = sprintf($email_1_message, $cart_url);
               $this->send_email($result->email_address, $email_1_subject, $email_1_message);
@@ -171,6 +174,9 @@ class SinhroIntegration
         if ($results && !is_wp_error($results) && count($results) > 0) {
           foreach ($results as $result) {
             $cart_url = wc_get_cart_url();
+            if (!empty(get_option("ssi_api_cart_url_1"))) {
+              $cart_url = get_option("ssi_api_cart_url_1");
+            }
 
             $response = $this->send_sms($result->phone, sprintf(esc_html__("Oops! You left something in your cart! You can finish what you started here: %s", "sinhro-sms-integration"), $cart_url));
 
@@ -190,6 +196,9 @@ class SinhroIntegration
           if ($results && !is_wp_error($results) && count($results) > 0) {
             foreach ($results as $result) {
               $cart_url = wc_get_cart_url();
+              if (!empty(get_option("ssi_mandrill_cart_url_2"))) {
+                $cart_url = get_option("ssi_mandrill_cart_url_2");
+              }
 
               $customer_first_name = isset($result->first_name) ? $result->first_name : "";
               $discount_value = get_option("ssi_api_discount_value") ? get_option("ssi_api_discount_value") : "20";
@@ -211,6 +220,10 @@ class SinhroIntegration
             $cart_url = wc_get_cart_url();
             $cart_url = add_query_arg("c", `${discount_value}off`, $cart_url);
 
+            if (!empty(get_option("ssi_api_cart_url_2"))) {
+              $cart_url = get_option("ssi_api_cart_url_2");
+            }
+
             $response = $this->send_sms($result->phone, sprintf(esc_html__("Hey %s, get %d%% OFF your purchase. Hurry, before it expires: %s", "sinhro-sms-integration"), $customer_first_name, $discount_value, $cart_url));
 
             if ($response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
@@ -229,6 +242,14 @@ class SinhroIntegration
 
           if ($results && !is_wp_error($results) && count($results) > 0) {
             foreach ($results as $result) {
+              $customer_first_name = isset($result->first_name) ? $result->first_name : "";
+
+              $cart_url = wc_get_cart_url();
+              if (!empty(get_option("ssi_api_cart_url_3"))) {
+                $cart_url = get_option("ssi_api_cart_url_3");
+              }
+
+              $email_3_message = sprintf($email_3_message, $customer_first_name, $cart_url);
               $this->send_email($result->email_address, $email_3_subject, $email_3_message);
               $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET email_3_sent=1 WHERE id=%d", $result->id));
             }
@@ -628,10 +649,16 @@ class SinhroIntegration
         register_setting("sinhro-times-integration-settings", "ssi_sms_1_minutes");
         register_setting("sinhro-times-integration-settings", "ssi_sms_2_minutes");
 
+        register_setting("sinhro-sms-integration-settings", "ssi_api_cart_url_1");
+        register_setting("sinhro-sms-integration-settings", "ssi_api_cart_url_2");
         register_setting("sinhro-sms-integration-settings", "ssi_api_host");
         register_setting("sinhro-sms-integration-settings", "ssi_api_username");
         register_setting("sinhro-sms-integration-settings", "ssi_api_discount_value");
         register_setting("sinhro-sms-integration-settings", "ssi_api_password");
+
+        register_setting("sinhro-email-integration-settings", "ssi_mandrill_cart_url_1");
+        register_setting("sinhro-email-integration-settings", "ssi_mandrill_cart_url_2");
+        register_setting("sinhro-email-integration-settings", "ssi_mandrill_cart_url_3");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_api_key");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_from_address");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_1_subject");

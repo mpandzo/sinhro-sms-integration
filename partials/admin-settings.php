@@ -135,6 +135,26 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
                   <small><?php esc_html_e("Default: 20", "sinhro-sms-integration"); ?></small>
               </td>
           </tr>
+          <tr valign="top">
+              <th scope="row">
+                  <?php esc_html_e("First sms cart url", "sinhro-sms-integration"); ?><br />
+                  <small><?php esc_html_e("Override default first sms cart url (woocommerce cart url)", "sinhro-sms-integration"); ?></small>
+              </th>
+              <td>
+                  <input type="text" name="ssi_api_cart_url_1" value="<?php echo esc_attr(get_option("ssi_api_cart_url_1")); ?>" />
+                  <small><?php esc_html_e("Default: http://yourdomain.com/cart", "sinhro-sms-integration"); ?></small>
+              </td>
+          </tr>
+          <tr valign="top">
+              <th scope="row">
+                  <?php esc_html_e("Second sms cart url", "sinhro-sms-integration"); ?><br />
+                  <small><?php esc_html_e("Override default second cart url (woocommerce cart url)", "sinhro-sms-integration"); ?></small>
+              </th>
+              <td>
+                  <input type="text" name="ssi_api_cart_url_2" value="<?php echo esc_attr(get_option("ssi_api_cart_url_2")); ?>" />
+                  <small><?php esc_html_e("Default: http://yourdomain.com/cart?c=%s", "sinhro-sms-integration"); ?></small>
+              </td>
+          </tr>
         </table>
 
         <?php submit_button(); ?>
@@ -169,6 +189,16 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
           </tr>
           <tr valign="top">
               <th scope="row">
+                  <?php esc_html_e("First email cart url", "sinhro-sms-integration"); ?><br />
+                  <small><?php esc_html_e("Override default first email cart url (woocommerce cart url)", "sinhro-sms-integration"); ?></small>
+              </th>
+              <td>
+                  <input type="text" name="ssi_mandrill_cart_url_1" value="<?php echo esc_attr(get_option("ssi_mandrill_cart_url_1")); ?>" />
+                  <small><?php esc_html_e("Default: http://yourdomain.com/cart", "sinhro-sms-integration"); ?></small>
+              </td>
+          </tr>
+          <tr valign="top">
+              <th scope="row">
                   <?php esc_html_e("Mandrill first email subject", "sinhro-sms-integration"); ?><br />
               </th>
               <td>
@@ -187,6 +217,16 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
           </tr>
           <tr valign="top">
               <th scope="row">
+                  <?php esc_html_e("Second email cart url", "sinhro-sms-integration"); ?><br />
+                  <small><?php esc_html_e("Override default second email cart url (woocommerce cart url)", "sinhro-sms-integration"); ?></small>
+              </th>
+              <td>
+                  <input type="text" name="ssi_mandrill_cart_url_2" value="<?php echo esc_attr(get_option("ssi_mandrill_cart_url_2")); ?>" />
+                  <small><?php esc_html_e("Default: http://yourdomain.com/cart", "sinhro-sms-integration"); ?></small>
+              </td>
+          </tr>
+          <tr valign="top">
+              <th scope="row">
                   <?php esc_html_e("Mandrill second email subject", "sinhro-sms-integration"); ?><br />
               </th>
               <td>
@@ -201,6 +241,16 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
               <td>
                   <textarea rows="5" cols="50" name="ssi_mandrill_email_2_message"><?php echo esc_attr(get_option("ssi_mandrill_email_2_message")); ?></textarea>
                   <small><?php esc_html_e("The second email message", "sinhro-sms-integration"); ?></small>
+              </td>
+          </tr>
+          <tr valign="top">
+              <th scope="row">
+                  <?php esc_html_e("Third email cart url", "sinhro-sms-integration"); ?><br />
+                  <small><?php esc_html_e("Override default third email cart url (woocommerce cart url)", "sinhro-sms-integration"); ?></small>
+              </th>
+              <td>
+                  <input type="text" name="ssi_mandrill_cart_url_3" value="<?php echo esc_attr(get_option("ssi_mandrill_cart_url_3")); ?>" />
+                  <small><?php esc_html_e("Default: http://yourdomain.com/cart", "sinhro-sms-integration"); ?></small>
               </td>
           </tr>
           <tr valign="top">
