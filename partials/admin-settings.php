@@ -187,6 +187,37 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
                   <small><?php esc_html_e("Your Mandrill from email address", "sinhro-sms-integration"); ?></small>
               </td>
           </tr>
+
+          <tr valign="top">
+              <th scope="row">
+                  <?php esc_html_e("All mails - Header color", "sinhro-sms-integration"); ?><br />
+              </th>
+              <td>
+                  <input type="text" name="ssi_mandrill_options_header_color" value="<?php echo esc_attr(get_option("ssi_mandrill_options_header_color")); ?>">
+                  <small><?php esc_html_e("The hex code for header (e.g. #ffffff)", "sinhro-sms-integration"); ?></small>
+              </td>
+          </tr>
+
+          <tr valign="top">
+              <th scope="row">
+                  <?php esc_html_e("All mails - Header logo URL", "sinhro-sms-integration"); ?><br />
+              </th>
+              <td>
+                  <input type="text" name="ssi_mandrill_options_header_logo" value="<?php echo esc_attr(get_option("ssi_mandrill_options_header_logo")); ?>">
+                  <small><?php esc_html_e("The URL for header logo", "sinhro-sms-integration"); ?></small>
+              </td>
+          </tr>
+
+          <tr valign="top">
+              <th scope="row">
+                  <?php esc_html_e("All mails - Footer logo URL", "sinhro-sms-integration"); ?><br />
+              </th>
+              <td>
+                  <input type="text" name="ssi_mandrill_options_footer_logo" value="<?php echo esc_attr(get_option("ssi_mandrill_options_footer_logo")); ?>">
+                  <small><?php esc_html_e("The URL for footer logo", "sinhro-sms-integration"); ?></small>
+              </td>
+          </tr>
+
           <tr valign="top">
               <th scope="row">
                   <?php esc_html_e("First email cart url", "sinhro-sms-integration"); ?><br />
@@ -333,13 +364,44 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
                     <small><?php esc_html_e("The email test subject to send", "sinhro-sms-integration"); ?></small>
                 </td>
             </tr>
+
             <tr valign="top">
                 <th scope="row">
-                    <?php esc_html_e("Email message", "sinhro-sms-integration"); ?><br />
+                    <?php esc_html_e("Header color", "sinhro-sms-integration"); ?><br />
                 </th>
                 <td>
-                    <textarea rows="5" cols="50" name="ssi_test_email_message"></textarea>
-                    <small><?php esc_html_e("The email test message to send", "sinhro-sms-integration"); ?></small>
+                    <input type="text" name="header_color">
+                    <small><?php esc_html_e("The hex code for header (e.g. #ffffff)", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Header logo URL", "sinhro-sms-integration"); ?><br />
+                </th>
+                <td>
+                    <input type="text" name="header_logo">
+                    <small><?php esc_html_e("The URL for header logo", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Footer logo URL", "sinhro-sms-integration"); ?><br />
+                </th>
+                <td>
+                    <input type="text" name="footer_logo">
+                    <small><?php esc_html_e("The URL for footer logo", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Email content", "sinhro-sms-integration"); ?><br />
+                </th>
+                <td>
+                    <textarea rows="5" cols="50" name="mail_content"></textarea>
+                    <small><?php esc_html_e("The main email content to send", "sinhro-sms-integration"); ?></small>
                 </td>
             </tr>
           </table>

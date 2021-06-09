@@ -150,6 +150,16 @@ class SinhroIntegration
         $sms_1_minutes = get_option("ssi_sms_1_minutes");
         $sms_2_minutes = get_option("ssi_sms_2_minutes");
 
+        $options_header_color = get_option("ssi_mandrill_options_header_color");
+        $options_header_logo = get_option("ssi_mandrill_options_header_logo");
+        $options_footer_logo = get_option("ssi_mandrill_options_footer_logo");
+
+        $options = [
+          'header_color' => $options_header_color,
+          'header_logo' => $options_header_logo,
+          'footer_logo' => $options_footer_logo
+        ];
+
         if (strlen($mandrill_api_key) > 0) {
 
           $results = $this->get_email_step_1_cart_entries($email_1_minutes ? $email_1_minutes : 15);
@@ -162,7 +172,8 @@ class SinhroIntegration
               }
 
               $email_1_message = sprintf($email_1_message, $cart_url);
-              $this->send_email($result->email_address, $email_1_subject, $email_1_message);
+              $options['content'] = stripslashes($email_1_message);
+              $this->send_email($result->email_address, $email_1_subject, $options);
 
               $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET email_1_sent=1 WHERE id=%d", $result->id));
             }
@@ -204,7 +215,8 @@ class SinhroIntegration
               $discount_value = get_option("ssi_api_discount_value") ? get_option("ssi_api_discount_value") : "20";
 
               $email_2_message = sprintf($email_2_message, $customer_first_name, $discount_value, $cart_url);
-              $this->send_email($result->email_address, $email_2_subject, $email_2_message);
+              $options['content'] = stripslashes($email_2_message);
+              $this->send_email($result->email_address, $email_2_subject, $options);
 
               $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET email_2_sent=1 WHERE id=%d", $result->id));
             }
@@ -250,7 +262,8 @@ class SinhroIntegration
               }
 
               $email_3_message = sprintf($email_3_message, $customer_first_name, $cart_url);
-              $this->send_email($result->email_address, $email_3_subject, $email_3_message);
+              $options['content'] = stripslashes($email_3_message);
+              $this->send_email($result->email_address, $email_3_subject, $options);
               $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET email_3_sent=1 WHERE id=%d", $result->id));
             }
           }
@@ -446,7 +459,13 @@ class SinhroIntegration
         return isset($lengths[$lcid]) ? $lengths[$lcid] : 8;
     }
 
-    public function send_email($to_email_address, $email_subject, $email_message) {
+    public function parse_template($options) {
+      ob_start();
+      include plugin_dir_path(__FILE__) . './templates/default.php';
+      return ob_get_clean();
+    }
+
+    public function send_email($to_email_address, $email_subject, $options = []) {
 
         $mandrill_api_key = get_option("ssi_mandrill_api_key");
         $from_email_address = get_option("ssi_mandrill_from_address");
@@ -455,13 +474,16 @@ class SinhroIntegration
           $mailchimp = new \MailchimpTransactional\ApiClient();
           $mailchimp->setApiKey($mandrill_api_key);
 
-          $response = $mailchimp->messages->send(["message" => [
-            "subject" => $email_subject,
-            "text" => $email_message,
-            "from_email" => $from_email_address,
-            "to" => array(array("email" => $to_email_address)),
-            "auto_html" => true,
-          ]]);
+          $response = $mailchimp->messages->send(
+          [
+            "message" => [
+              "subject" => $email_subject,
+              "from_email" => $from_email_address,
+              "to" => array(array("email" => $to_email_address)),
+              "html" => $this->parse_template($options),
+              "auto_html" => true,
+            ]
+          ]);
       }
 
       return $response;
@@ -547,9 +569,20 @@ class SinhroIntegration
             if ($this->validate_test_email_post_request()) {
               $test_to_email = $_POST["ssi_test_to_email"];
               $test_email_subject = $_POST["ssi_test_email_subject"];
-              $test_email_message = $_POST["ssi_test_email_message"];
 
-              $response = $this->send_email($test_to_email, $test_email_subject, $test_email_message);
+              $options_header_color = $_POST["header_color"];
+              $options_header_logo = $_POST["header_logo"];
+              $options_footer_logo = $_POST["footer_logo"];
+              $options_content = $_POST["mail_content"];
+
+              $options = [
+                'header_color' => $options_header_color,
+                'header_logo' => $options_header_logo,
+                'footer_logo' => $options_footer_logo,
+                'content' => stripslashes($options_content)
+              ];
+
+              $response = $this->send_email($test_to_email, $test_email_subject, $options);
 
               if (!is_array($response) && strpos($response, "error") !== false) {
                 ?>
@@ -584,10 +617,6 @@ class SinhroIntegration
         }
 
         if (!isset($_POST["ssi_test_email_subject"]) || empty($_POST["ssi_test_email_subject"])) {
-          return false;
-        }
-
-        if (!isset($_POST["ssi_test_email_message"]) || empty($_POST["ssi_test_email_message"])) {
           return false;
         }
 
@@ -661,6 +690,9 @@ class SinhroIntegration
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_cart_url_3");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_api_key");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_from_address");
+        register_setting("sinhro-email-integration-settings", "ssi_mandrill_options_header_color");
+        register_setting("sinhro-email-integration-settings", "ssi_mandrill_options_header_logo");
+        register_setting("sinhro-email-integration-settings", "ssi_mandrill_options_footer_logo");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_1_subject");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_1_message");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_2_subject");
