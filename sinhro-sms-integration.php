@@ -570,9 +570,9 @@ class SinhroIntegration
               $test_to_email = $_POST["ssi_test_to_email"];
               $test_email_subject = $_POST["ssi_test_email_subject"];
 
-              $options_header_color = $_POST["header_color"];
-              $options_header_logo = $_POST["header_logo"];
-              $options_footer_logo = $_POST["footer_logo"];
+              $options_header_color = get_option("ssi_mandrill_options_header_color");
+              $options_header_logo = get_option("ssi_mandrill_options_header_logo");
+              $options_footer_logo = get_option("ssi_mandrill_options_footer_logo");
               $options_content = $_POST["mail_content"];
 
               $options = [
