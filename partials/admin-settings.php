@@ -19,6 +19,7 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
       <a href="<?php echo wc_get_current_admin_url() ?>&tab=sms" class="nav-tab <?php if($tab==="sms"):?>nav-tab-active<?php endif; ?>"><?php _e('Sms settings', "sinhro-sms-integration"); ?></a>
       <a href="<?php echo wc_get_current_admin_url() ?>&tab=test-sms" class="nav-tab <?php if($tab==="test-sms"):?>nav-tab-active<?php endif; ?>"><?php _e('Test sms', "sinhro-sms-integration"); ?></a>
       <a href="<?php echo wc_get_current_admin_url() ?>&tab=email" class="nav-tab <?php if($tab==='email'):?>nav-tab-active<?php endif; ?>"><?php _e('Email settings', "sinhro-sms-integration"); ?></a>
+      <a href="<?php echo wc_get_current_admin_url() ?>&tab=email-template" class="nav-tab <?php if($tab==='email-template'):?>nav-tab-active<?php endif; ?>"><?php _e('Email template settings', "sinhro-sms-integration"); ?></a>
       <a href="<?php echo wc_get_current_admin_url() ?>&tab=test-email" class="nav-tab <?php if($tab==='test-email'):?>nav-tab-active<?php endif; ?>"><?php _e('Test email', "sinhro-sms-integration"); ?></a>
       <a href="<?php echo wc_get_current_admin_url() ?>&tab=browse-abandoned-carts" class="nav-tab <?php if($tab==='browse-abandoned-carts'):?>nav-tab-active<?php endif; ?>"><?php _e('Browse abandoned carts', "sinhro-sms-integration"); ?></a>
     </nav>
@@ -159,7 +160,186 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
 
         <?php submit_button(); ?>
       </form>
+      <?php } else if ($tab === "email-template") { ?>
+        <form method="post" action="options.php">
+        <?php settings_fields("sinhro-email-template-integration-settings"); ?>
+        <?php do_settings_sections("sinhro-email-template-integration-settings"); ?>
 
+
+        <div>
+          <p><b><?php echo __("Note: all image URL's MUST be in either .png or .jpg format because most email clients are unable to render .svg images.", "sinhro-sms-integration") ?></b></p>
+        </div>
+
+        <table class="form-table">
+          <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Header color", "sinhro-sms-integration"); ?><br />
+                </th>
+                <td>
+                    <input type="text" name="ssi_mandrill_options_header_color" value="<?php echo esc_attr(get_option("ssi_mandrill_options_header_color")); ?>">
+                    <small><?php esc_html_e("The hex code for header (e.g. #ffffff)", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Footer color", "sinhro-sms-integration"); ?><br />
+                </th>
+                <td>
+                    <input type="text" name="ssi_mandrill_options_footer_color" value="<?php echo esc_attr(get_option("ssi_mandrill_options_footer_color")); ?>">
+                    <small><?php esc_html_e("The hex code for footer (e.g. #ffffff)", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Header logo URL", "sinhro-sms-integration"); ?><br />
+                </th>
+                <td>
+                    <input type="text" name="ssi_mandrill_options_header_logo" value="<?php echo esc_attr(get_option("ssi_mandrill_options_header_logo")); ?>">
+                    <small><?php esc_html_e("The URL for header logo", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Footer image URL", "sinhro-sms-integration"); ?><br />
+                </th>
+                <td>
+                    <input type="text" name="ssi_mandrill_options_footer_logo" value="<?php echo esc_attr(get_option("ssi_mandrill_options_footer_logo")); ?>">
+                    <small><?php esc_html_e("The URL for footer image", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Footer headline", "sinhro-sms-integration"); ?><br />
+                </th>
+                <td>
+                    <input type="text" name="ssi_mandrill_options_footer_headline" value="<?php echo esc_attr(get_option("ssi_mandrill_options_footer_headline")); ?>">
+                    <small><?php esc_html_e("The headline for footer", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Facebook url", "sinhro-sms-integration"); ?><br />
+                </th>
+
+                <td>
+                    <input type="text" name="ssi_mandrill_options_facebook_url" value="<?php echo esc_attr(get_option("ssi_mandrill_options_facebook_url")); ?>">
+                    <small><?php esc_html_e("The URL for facebook link", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Facebook img", "sinhro-sms-integration"); ?><br />
+                </th>
+
+                <td>
+                    <input type="text" name="ssi_mandrill_options_facebook_img" value="<?php echo esc_attr(get_option("ssi_mandrill_options_facebook_img")); ?>">
+                    <small><?php esc_html_e("The URL for facebook image", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Instagram url", "sinhro-sms-integration"); ?><br />
+                </th>
+
+                <td>
+                    <input type="text" name="ssi_mandrill_options_instagram_url" value="<?php echo esc_attr(get_option("ssi_mandrill_options_instagram_url")); ?>">
+                    <small><?php esc_html_e("The URL for instagram link", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Instagram img", "sinhro-sms-integration"); ?><br />
+                </th>
+
+                <td>
+                    <input type="text" name="ssi_mandrill_options_instagram_img" value="<?php echo esc_attr(get_option("ssi_mandrill_options_instagram_img")); ?>">
+                    <small><?php esc_html_e("The URL for instagram image", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Twitter url", "sinhro-sms-integration"); ?><br />
+                </th>
+
+                <td>
+                    <input type="text" name="ssi_mandrill_options_twitter_url" value="<?php echo esc_attr(get_option("ssi_mandrill_options_twitter_url")); ?>">
+                    <small><?php esc_html_e("The URL for twitter link", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Twitter img", "sinhro-sms-integration"); ?><br />
+                </th>
+
+                <td>
+                    <input type="text" name="ssi_mandrill_options_twitter_img" value="<?php echo esc_attr(get_option("ssi_mandrill_options_twitter_img")); ?>">
+                    <small><?php esc_html_e("The URL for twitter image", "sinhro-sms-integration"); ?></small>
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("For any questions please send an email to", "sinhro-sms-integration"); ?><br />
+                </th>
+
+                <td>
+                    <input type="text" name="ssi_mandrill_options_info_mail" value="<?php echo esc_attr(get_option("ssi_mandrill_options_info_mail")); ?>">
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Footer first link URL", "sinhro-sms-integration"); ?><br />
+                </th>
+
+                <td>
+                    <input type="text" name="ssi_mandrill_options_footer_first_link_url" value="<?php echo esc_attr(get_option("ssi_mandrill_options_footer_first_link_url")); ?>">
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Footer first link text", "sinhro-sms-integration"); ?><br />
+                </th>
+
+                <td>
+                    <input type="text" name="ssi_mandrill_options_footer_first_link_text" value="<?php echo esc_attr(get_option("ssi_mandrill_options_footer_first_link_text")); ?>">
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Footer second link URL", "sinhro-sms-integration"); ?><br />
+                </th>
+
+                <td>
+                    <input type="text" name="ssi_mandrill_options_footer_second_link_url" value="<?php echo esc_attr(get_option("ssi_mandrill_options_footer_second_link_url")); ?>">
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <?php esc_html_e("Footer second link text", "sinhro-sms-integration"); ?><br />
+                </th>
+
+                <td>
+                    <input type="text" name="ssi_mandrill_options_footer_second_link_text" value="<?php echo esc_attr(get_option("ssi_mandrill_options_footer_second_link_text")); ?>">
+                </td>
+            </tr>
+        </table>
+
+        <?php submit_button(); ?>
+        </form>
       <?php } else if ($tab === "email") { ?>
       <form method="post" action="options.php">
         <?php settings_fields("sinhro-email-integration-settings"); ?>
@@ -185,36 +365,6 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
               <td>
                   <input type="text" name="ssi_mandrill_from_address" value="<?php echo esc_attr(get_option("ssi_mandrill_from_address")); ?>" />
                   <small><?php esc_html_e("Your Mandrill from email address", "sinhro-sms-integration"); ?></small>
-              </td>
-          </tr>
-
-          <tr valign="top">
-              <th scope="row">
-                  <?php esc_html_e("All mails - Header color", "sinhro-sms-integration"); ?><br />
-              </th>
-              <td>
-                  <input type="text" name="ssi_mandrill_options_header_color" value="<?php echo esc_attr(get_option("ssi_mandrill_options_header_color")); ?>">
-                  <small><?php esc_html_e("The hex code for header (e.g. #ffffff)", "sinhro-sms-integration"); ?></small>
-              </td>
-          </tr>
-
-          <tr valign="top">
-              <th scope="row">
-                  <?php esc_html_e("All mails - Header logo URL", "sinhro-sms-integration"); ?><br />
-              </th>
-              <td>
-                  <input type="text" name="ssi_mandrill_options_header_logo" value="<?php echo esc_attr(get_option("ssi_mandrill_options_header_logo")); ?>">
-                  <small><?php esc_html_e("The URL for header logo", "sinhro-sms-integration"); ?></small>
-              </td>
-          </tr>
-
-          <tr valign="top">
-              <th scope="row">
-                  <?php esc_html_e("All mails - Footer logo URL", "sinhro-sms-integration"); ?><br />
-              </th>
-              <td>
-                  <input type="text" name="ssi_mandrill_options_footer_logo" value="<?php echo esc_attr(get_option("ssi_mandrill_options_footer_logo")); ?>">
-                  <small><?php esc_html_e("The URL for footer logo", "sinhro-sms-integration"); ?></small>
               </td>
           </tr>
 
@@ -362,36 +512,6 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
                 <td>
                     <input type="text" name="ssi_test_email_subject" />
                     <small><?php esc_html_e("The email test subject to send", "sinhro-sms-integration"); ?></small>
-                </td>
-            </tr>
-
-            <tr valign="top">
-                <th scope="row">
-                    <?php esc_html_e("Header color", "sinhro-sms-integration"); ?><br />
-                </th>
-                <td>
-                    <input type="text" name="header_color">
-                    <small><?php esc_html_e("The hex code for header (e.g. #ffffff)", "sinhro-sms-integration"); ?></small>
-                </td>
-            </tr>
-
-            <tr valign="top">
-                <th scope="row">
-                    <?php esc_html_e("Header logo URL", "sinhro-sms-integration"); ?><br />
-                </th>
-                <td>
-                    <input type="text" name="header_logo">
-                    <small><?php esc_html_e("The URL for header logo", "sinhro-sms-integration"); ?></small>
-                </td>
-            </tr>
-
-            <tr valign="top">
-                <th scope="row">
-                    <?php esc_html_e("Footer logo URL", "sinhro-sms-integration"); ?><br />
-                </th>
-                <td>
-                    <input type="text" name="footer_logo">
-                    <small><?php esc_html_e("The URL for footer logo", "sinhro-sms-integration"); ?></small>
                 </td>
             </tr>
 

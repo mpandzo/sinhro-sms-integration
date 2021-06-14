@@ -136,6 +136,7 @@ class SinhroIntegration
 
         $this->check_and_create_db_table();
 
+        $mandrill_from_address = get_option("ssi_mandrill_from_address");
         $mandrill_api_key = get_option("ssi_mandrill_api_key");
         $email_1_subject = get_option("ssi_mandrill_email_1_subject");
         $email_1_message = get_option("ssi_mandrill_email_1_message");
@@ -151,13 +152,41 @@ class SinhroIntegration
         $sms_2_minutes = get_option("ssi_sms_2_minutes");
 
         $options_header_color = get_option("ssi_mandrill_options_header_color");
+        $options_footer_color = get_option("ssi_mandrill_options_footer_color");
         $options_header_logo = get_option("ssi_mandrill_options_header_logo");
         $options_footer_logo = get_option("ssi_mandrill_options_footer_logo");
+        $options_info_mail = get_option("ssi_mandrill_options_info_mail");
+
+        $options_facebook_url = get_option("ssi_mandrill_options_facebook_url");
+        $options_facebook_img = get_option("ssi_mandrill_options_facebook_img");
+        $options_instagram_url = get_option("ssi_mandrill_options_instagram_url");
+        $options_instagram_img = get_option("ssi_mandrill_options_instagram_img");
+        $options_twitter_url = get_option("ssi_mandrill_options_twitter_url");
+        $options_twitter_img = get_option("ssi_mandrill_options_twitter_img");
+
+        $options_footer_first_link_url = get_option("ssi_mandrill_options_footer_first_link_url");
+        $options_footer_first_link_text = get_option("ssi_mandrill_options_footer_first_link_text");
+
+        $options_footer_second_link_url = get_option("ssi_mandrill_options_footer_second_link_url");
+        $options_footer_second_link_text = get_option("ssi_mandrill_options_footer_second_link_text");
 
         $options = [
           'header_color' => $options_header_color,
+          'footer_color' => $options_footer_color,
           'header_logo' => $options_header_logo,
-          'footer_logo' => $options_footer_logo
+          'footer_logo' => $options_footer_logo,
+          'facebook_url' => $options_facebook_url,
+          'facebook_img' => $options_facebook_img,
+          'instagram_url' => $options_instagram_url,
+          'instagram_img' => $options_instagram_img,
+          'twitter_url' => $options_twitter_url,
+          'twitter_img' => $options_twitter_img,
+          'info_mail' => $options_info_mail,
+          'sent_by' => $mandrill_from_address,
+          'footer_first_link_url' => $options_footer_first_link_url,
+          'footer_first_link_text' => $options_footer_first_link_text,
+          'footer_second_link_url' => $options_footer_second_link_url,
+          'footer_second_link_text' => $options_footer_second_link_text
         ];
 
         if (strlen($mandrill_api_key) > 0) {
@@ -570,16 +599,47 @@ class SinhroIntegration
               $test_to_email = $_POST["ssi_test_to_email"];
               $test_email_subject = $_POST["ssi_test_email_subject"];
 
+              $mandrill_from_address = get_option("ssi_mandrill_from_address");
+
               $options_header_color = get_option("ssi_mandrill_options_header_color");
+              $options_footer_color = get_option("ssi_mandrill_options_footer_color");
               $options_header_logo = get_option("ssi_mandrill_options_header_logo");
               $options_footer_logo = get_option("ssi_mandrill_options_footer_logo");
+              $options_info_mail = get_option("ssi_mandrill_options_info_mail");
+
+              $options_facebook_url = get_option("ssi_mandrill_options_facebook_url");
+              $options_facebook_img = get_option("ssi_mandrill_options_facebook_img");
+              $options_instagram_url = get_option("ssi_mandrill_options_instagram_url");
+              $options_instagram_img = get_option("ssi_mandrill_options_instagram_img");
+              $options_twitter_url = get_option("ssi_mandrill_options_twitter_url");
+              $options_twitter_img = get_option("ssi_mandrill_options_twitter_img");
+
+              $options_footer_first_link_url = get_option("ssi_mandrill_options_footer_first_link_url");
+              $options_footer_first_link_text = get_option("ssi_mandrill_options_footer_first_link_text");
+
+              $options_footer_second_link_url = get_option("ssi_mandrill_options_footer_second_link_url");
+              $options_footer_second_link_text = get_option("ssi_mandrill_options_footer_second_link_text");
+
               $options_content = $_POST["mail_content"];
 
               $options = [
                 'header_color' => $options_header_color,
+                'footer_color' => $options_footer_color,
                 'header_logo' => $options_header_logo,
                 'footer_logo' => $options_footer_logo,
-                'content' => stripslashes($options_content)
+                'facebook_url' => $options_facebook_url,
+                'facebook_img' => $options_facebook_img,
+                'instagram_url' => $options_instagram_url,
+                'instagram_img' => $options_instagram_img,
+                'twitter_url' => $options_twitter_url,
+                'twitter_img' => $options_twitter_img,
+                'content' => stripslashes($options_content),
+                'sent_by' => $mandrill_from_address,
+                'info_mail' => $options_info_mail,
+                'footer_first_link_url' => $options_footer_first_link_url,
+                'footer_first_link_text' => $options_footer_first_link_text,
+                'footer_second_link_url' => $options_footer_second_link_url,
+                'footer_second_link_text' => $options_footer_second_link_text
               ];
 
               $response = $this->send_email($test_to_email, $test_email_subject, $options);
@@ -690,15 +750,30 @@ class SinhroIntegration
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_cart_url_3");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_api_key");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_from_address");
-        register_setting("sinhro-email-integration-settings", "ssi_mandrill_options_header_color");
-        register_setting("sinhro-email-integration-settings", "ssi_mandrill_options_header_logo");
-        register_setting("sinhro-email-integration-settings", "ssi_mandrill_options_footer_logo");
+
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_1_subject");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_1_message");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_2_subject");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_2_message");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_3_subject");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_3_message");
+
+        register_setting("sinhro-email-template-integration-settings", "ssi_mandrill_options_header_color");
+        register_setting("sinhro-email-template-integration-settings", "ssi_mandrill_options_footer_color");
+        register_setting("sinhro-email-template-integration-settings", "ssi_mandrill_options_footer_headline");
+        register_setting("sinhro-email-template-integration-settings", "ssi_mandrill_options_header_logo");
+        register_setting("sinhro-email-template-integration-settings", "ssi_mandrill_options_footer_logo");
+        register_setting("sinhro-email-template-integration-settings", "ssi_mandrill_options_facebook_url");
+        register_setting("sinhro-email-template-integration-settings", "ssi_mandrill_options_facebook_img");
+        register_setting("sinhro-email-template-integration-settings", "ssi_mandrill_options_instagram_url");
+        register_setting("sinhro-email-template-integration-settings", "ssi_mandrill_options_instagram_img");
+        register_setting("sinhro-email-template-integration-settings", "ssi_mandrill_options_twitter_url");
+        register_setting("sinhro-email-template-integration-settings", "ssi_mandrill_options_twitter_img");
+        register_setting("sinhro-email-template-integration-settings", "ssi_mandrill_options_info_mail");
+        register_setting("sinhro-email-template-integration-settings", "ssi_mandrill_options_footer_first_link_url");
+        register_setting("sinhro-email-template-integration-settings", "ssi_mandrill_options_footer_first_link_text");
+        register_setting("sinhro-email-template-integration-settings", "ssi_mandrill_options_footer_second_link_url");
+        register_setting("sinhro-email-template-integration-settings", "ssi_mandrill_options_footer_second_link_text");
     }
 
     public function load_plugin_textdomain()
