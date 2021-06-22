@@ -185,7 +185,7 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
                   <?php esc_html_e("Post purchase first sms survey page url", "sinhro-sms-integration"); ?><br />
               </th>
               <td>
-                  <input type="text" name="ssi_post_purchase_sms_survey_page_url" value="<?php echo esc_attr(get_option("ssi_post_purchase_sms_survey_page_url")); ?>" />
+                  <input type="text" name="ssi_post_purchase_sms_1_survey_page_url" value="<?php echo esc_attr(get_option("ssi_post_purchase_sms_1_survey_page_url")); ?>" />
               </td>
           </tr>
         </table>

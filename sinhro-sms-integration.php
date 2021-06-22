@@ -84,12 +84,13 @@ class SinhroIntegration
         add_action("wp_ajax_nopriv_save_checkout_info", array($this, "save_checkout_info"));
 
         // cron job code
-        add_action("wp", array($this, "register_cart_cron_job"));
-        add_action("ssi_cart_process_sms", array($this, "cart_process_sms"));
+        add_action("admin_init", array($this, "register_cart_cron_job"));
+        add_action("ssi_cart_process_sms", array($this, "process_abandoned_carts"));
+        add_action("ssi_post_purchase_surveys", array($this, "process_post_purchase_surveys"));
         add_filter("cron_schedules", array($this, "add_cron_interval"));
 
         // post purchase survey form shortcode
-        add_shortcode('post_purchase_survey', array($this, 'post_purchase_survey_function'));
+        add_shortcode('post_purchase_survey', array($this, 'post_purchase_survey_shortcode_function'));
     }
 
     function get_current_page_url() {
@@ -97,7 +98,7 @@ class SinhroIntegration
         return add_query_arg( $_SERVER['QUERY_STRING'], '', home_url( $wp->request ) );
     }
 
-    public function post_purchase_survey_function($atts = array()) {
+    public function post_purchase_survey_shortcode_function($atts = array()) {
         global $wpdb;
 
         $output = "";
@@ -267,7 +268,36 @@ class SinhroIntegration
             "display"  => esc_html__("Every Five Minutes", "sinhro-sms-integration")
         );
 
+        $schedules["seven_minutes"] = array(
+          "interval" => 7 * 60,
+          "display"  => esc_html__("Every Seven Minutes", "sinhro-sms-integration")
+        );
+
         return $schedules;
+    }
+
+    public function get_post_purchase_email_1_entries($interval_minutes) {
+        global $wpdb;
+
+        $temp_cart_table_name = $wpdb->prefix . POST_PURCHASE_ENTRIES_TABLE_NAME;
+
+        $results = $wpdb->get_results($wpdb->prepare("
+          SELECT * FROM $temp_cart_table_name
+          WHERE email_1_sent = 0 AND email_address != '' AND survey_completed = 0 AND created < DATE_SUB(NOW(), INTERVAL %d MINUTE)", $interval_minutes));
+
+        return $results;
+    }
+
+    public function get_post_purchase_sms_1_entries($interval_minutes) {
+        global $wpdb;
+
+        $temp_cart_table_name = $wpdb->prefix . POST_PURCHASE_ENTRIES_TABLE_NAME;
+
+        $results = $wpdb->get_results($wpdb->prepare("
+          SELECT * FROM $temp_cart_table_name
+          WHERE email_1_sent = 1 AND sms_1_sent = 0 AND phone != '' AND survey_completed = 0 AND created < DATE_SUB(NOW(), INTERVAL %d MINUTE)", $interval_minutes));
+
+        return $results;
     }
 
     public function get_email_step_1_cart_entries($interval_minutes) {
@@ -305,12 +335,72 @@ class SinhroIntegration
       return $results;
     }
 
+    // send email 1 15 after order is marked as completed
+    // if survey is not completed, send sms 1 24 hours later
+    public function process_post_purchase_surveys() {
+      global $wpdb;
+
+      // POST_PURCHASE_ENTRIES_TABLE_NAME
+      // POST_PURCHASE_SURVEY_RESULTS_TABLE_NAME
+
+      $temp_cart_table_name = $wpdb->prefix . POST_PURCHASE_ENTRIES_TABLE_NAME;
+
+      $this->check_and_create_db_tables();
+
+      $mandrill_from_address = get_option("ssi_mandrill_from_address");
+      $mandrill_api_key = get_option("ssi_mandrill_api_key");
+
+      $email_1_survey_page_url = get_option("ssi_mandrill_post_purchase_email_1_survey_page_url");
+      $email_1_subject = get_option("ssi_mandrill_post_purchase_email_1_subject");
+      $email_1_message = get_option("ssi_mandrill_post_purchase_email_1_message");
+      $email_1_minutes = get_option("ssi_post_purchase_email_1_minutes");
+
+      $sms_1_minutes = get_option("ssi_post_purchase_sms_1_minutes");
+      $sms_1_survey_page_url = get_option("ssi_post_purchase_sms_1_survey_page_url");
+
+      // get_post_purchase_email_1_entries
+      // get_post_purchase_sms_1_entries
+
+      if (strlen($mandrill_api_key) > 0 && strlen($email_1_survey_page_url) > 0 && strlen($email_1_subject) > 0 && strlen($email_1_message) > 0) {
+        $results = $this->get_post_purchase_email_1_entries($email_1_minutes ? $email_1_minutes : 15);
+
+        if ($results && !is_wp_error($results) && count($results) > 0) {
+          foreach ($results as $result) {
+            $options['content'] = stripslashes(sprintf($email_1_message, $email_1_survey_page_url));
+
+            $this->send_email($result->email_address, $email_1_subject, $options);
+
+            $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET email_1_sent=1 WHERE id=%d", $result->id));
+          }
+        }
+      }
+
+
+      if (strlen($sms_1_survey_page_url) > 0) {
+        $results = $this->get_post_purchase_sms_1_entries($sms_1_minutes ? $sms_1_minutes : 1440);
+
+        if ($results && !is_wp_error($results) && count($results) > 0) {
+          foreach ($results as $result) {
+            $response = $this->send_sms($result->phone, sprintf(esc_html__("Your order is complete! Please take a few minutes to do our survey: %s", "sinhro-sms-integration"), $sms_1_survey_page_url));
+
+            if (!is_wp_error($response) && $response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
+                $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_1_sent=1 WHERE id=%d", $result->id));
+            } else {
+                $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_send_errors=sms_send_errors+1 WHERE id=%d", $result->id));
+                error_log("Error, sms 1 not sent to $result->phone\n\r", 3, $this->plugin_log_file);
+                error_log(serialize($response), 3, $this->plugin_log_file);
+            }
+          }
+        }
+      }
+    }
+
     // send email 1 15 after checkout screen reached
     // if link from email 1 is not opened, send sms 1 24 hours later
     // if link from sms 1 is not opened send email 2 after another 12 hours
     // if link from email 2 is not opened send sms 2 after another 12 hours
     // if link from sms 2 is not opened send email 3 after 24 hours later
-    public function cart_process_sms()
+    public function process_abandoned_carts()
     {
         global $wpdb;
 
@@ -486,6 +576,10 @@ class SinhroIntegration
     {
         if (! wp_next_scheduled("ssi_cart_process_sms")) {
             wp_schedule_event(time(), "five_minutes", "ssi_cart_process_sms");
+        }
+
+        if (! wp_next_scheduled("ssi_post_purchase_surveys")) {
+            wp_schedule_event(time(), "seven_minutes", "ssi_post_purchase_surveys");
         }
     }
 
@@ -996,7 +1090,7 @@ class SinhroIntegration
         register_setting("sinhro-times-integration-settings", "ssi_sms_1_minutes");
         register_setting("sinhro-times-integration-settings", "ssi_sms_2_minutes");
 
-        register_setting("sinhro-sms-integration-settings", "ssi_post_purchase_sms_survey_page_url");
+        register_setting("sinhro-sms-integration-settings", "ssi_post_purchase_sms_1_survey_page_url");
         register_setting("sinhro-sms-integration-settings", "ssi_api_cart_url_1");
         register_setting("sinhro-sms-integration-settings", "ssi_api_cart_url_2");
         register_setting("sinhro-sms-integration-settings", "ssi_api_host");
