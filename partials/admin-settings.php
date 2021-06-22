@@ -6,6 +6,7 @@ if ( ! current_user_can( 'manage_options' ) ) {
 }
 
 require_once(__DIR__ . "/../lib/class-abandoned-carts-table.php");
+require_once(__DIR__ . "/../lib/class-post-purchase-survey-results-table.php");
 
 //Get the active tab from the $_GET param
 $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
@@ -22,6 +23,8 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
       <a href="<?php echo wc_get_current_admin_url() ?>&tab=email-template" class="nav-tab <?php if($tab==='email-template'):?>nav-tab-active<?php endif; ?>"><?php _e('Email template settings', "sinhro-sms-integration"); ?></a>
       <a href="<?php echo wc_get_current_admin_url() ?>&tab=test-email" class="nav-tab <?php if($tab==='test-email'):?>nav-tab-active<?php endif; ?>"><?php _e('Test email', "sinhro-sms-integration"); ?></a>
       <a href="<?php echo wc_get_current_admin_url() ?>&tab=browse-abandoned-carts" class="nav-tab <?php if($tab==='browse-abandoned-carts'):?>nav-tab-active<?php endif; ?>"><?php _e('Browse abandoned carts', "sinhro-sms-integration"); ?></a>
+      <a href="<?php echo wc_get_current_admin_url() ?>&tab=post-purchase" class="nav-tab <?php if($tab==='post-purchase'):?>nav-tab-active<?php endif; ?>"><?php _e('Post purchase settings', "sinhro-sms-integration"); ?></a>
+      <a href="<?php echo wc_get_current_admin_url() ?>&tab=browse-post-purchase" class="nav-tab <?php if($tab==='browse-post-purchase'):?>nav-tab-active<?php endif; ?>"><?php _e('Browse post purchase survey results', "sinhro-sms-integration"); ?></a>
     </nav>
 
     <?php if ($tab === "times") { ?>
@@ -81,6 +84,26 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
               <td>
                   <input type="number" name="ssi_email_3_minutes" value="<?php echo esc_attr(get_option("ssi_email_3_minutes")); ?>" />
                   <small><?php esc_html_e("Default: 3840 - ie 64 hours (60x64)", "sinhro-sms-integration"); ?></small>
+              </td>
+            </tr>
+            <tr valign="top">
+              <th scope="row">
+                  <?php esc_html_e("Post Purchase Email 1 time", "sinhro-sms-integration"); ?><br />
+                  <small><?php esc_html_e("Time in minutes after order is marked Completed that that we send the first post purchase email", "sinhro-sms-integration"); ?></small>
+              </th>
+              <td>
+                  <input type="number" name="ssi_post_purchase_email_1_minutes" value="<?php echo esc_attr(get_option("ssi_post_purchase_email_1_minutes")); ?>" />
+                  <small><?php esc_html_e("Default: 15", "sinhro-sms-integration"); ?></small>
+              </td>
+            </tr>
+            <tr valign="top">
+              <th scope="row">
+                  <?php esc_html_e("Post Purchase Sms 1 time", "sinhro-sms-integration"); ?><br />
+                  <small><?php esc_html_e("Time in minutes after order is marked Completed that we send the first post purchase sms", "sinhro-sms-integration"); ?></small>
+              </th>
+              <td>
+                  <input type="number" name="ssi_post_purchase_sms_1_minutes" value="<?php echo esc_attr(get_option("ssi_post_purchase_sms_1_minutes")); ?>" />
+                  <small><?php esc_html_e("Default: 1440 - ie 24 hours (60x24)", "sinhro-sms-integration"); ?></small>
               </td>
             </tr>
         </table>
@@ -156,6 +179,15 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
                   <small><?php esc_html_e("Default: http://yourdomain.com/cart?c=%s", "sinhro-sms-integration"); ?></small>
               </td>
           </tr>
+
+          <tr valign="top">
+              <th scope="row">
+                  <?php esc_html_e("Post purchase first sms survey page url", "sinhro-sms-integration"); ?><br />
+              </th>
+              <td>
+                  <input type="text" name="ssi_post_purchase_sms_survey_page_url" value="<?php echo esc_attr(get_option("ssi_post_purchase_sms_survey_page_url")); ?>" />
+              </td>
+          </tr>
         </table>
 
         <?php submit_button(); ?>
@@ -164,7 +196,6 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
         <form method="post" action="options.php">
         <?php settings_fields("sinhro-email-template-integration-settings"); ?>
         <?php do_settings_sections("sinhro-email-template-integration-settings"); ?>
-
 
         <div>
           <p><b><?php echo __("Note: all image URL's MUST be in either .png or .jpg format because most email clients are unable to render .svg images.", "sinhro-sms-integration") ?></b></p>
@@ -341,6 +372,7 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
         <?php submit_button(); ?>
         </form>
       <?php } else if ($tab === "email") { ?>
+
       <form method="post" action="options.php">
         <?php settings_fields("sinhro-email-integration-settings"); ?>
         <?php do_settings_sections("sinhro-email-integration-settings"); ?>
@@ -452,6 +484,89 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
                   <small><?php esc_html_e("The third email message", "sinhro-sms-integration"); ?></small>
               </td>
           </tr>
+
+          <tr valign="top">
+              <th scope="row">
+                  <?php esc_html_e("Mandrill Post Purchase first email survey page url", "sinhro-sms-integration"); ?><br />
+              </th>
+              <td>
+                  <input type="text" name="ssi_mandrill_post_purchase_email_1_survey_page_url" value="<?php echo esc_attr(get_option("ssi_mandrill_post_purchase_email_1_survey_page_url")); ?>" />
+                  <small><?php esc_html_e("The first Post Purchase email survey page url", "sinhro-sms-integration"); ?></small>
+              </td>
+          </tr>
+          <tr valign="top">
+              <th scope="row">
+                  <?php esc_html_e("Mandrill Post Purchase first email subject", "sinhro-sms-integration"); ?><br />
+              </th>
+              <td>
+                  <input type="text" name="ssi_mandrill_post_purchase_email_1_subject" value="<?php echo esc_attr(get_option("ssi_mandrill_post_purchase_email_1_subject")); ?>" />
+                  <small><?php esc_html_e("The first Post Purchase email subject", "sinhro-sms-integration"); ?></small>
+              </td>
+          </tr>
+          <tr valign="top">
+              <th scope="row">
+                  <?php esc_html_e("Mandrill Post Purchase first email message", "sinhro-sms-integration"); ?><br />
+              </th>
+              <td>
+                  <textarea rows="5" cols="50" name="ssi_mandrill_post_purchase_email_1_message"><?php echo esc_attr(get_option("ssi_mandrill_post_purchase_email_1_message")); ?></textarea>
+                  <small><?php esc_html_e("The first Post Purchase email message", "sinhro-sms-integration"); ?></small>
+              </td>
+          </tr>
+      </table>
+
+      <?php submit_button(); ?>
+    </form>
+
+    <?php } else if ($tab === "post-purchase") { ?>
+
+    <form method="post" action="options.php">
+      <?php settings_fields("sinhro-post-purchase-settings"); ?>
+      <?php do_settings_sections("sinhro-post-purchase-settings"); ?>
+
+      <table class="form-table">
+        <tr valign="top">
+          <td style="padding: 10px 0;margin: 0;" colspan="2"><h2 style="padding: 0;margin: 0;"><?php esc_html_e("Post purchase settings", "sinhro-sms-integration"); ?></h2></td>
+        </tr>
+        <tr valign="top">
+            <th scope="row">
+                <?php esc_html_e("Post purchase quality question", "sinhro-sms-integration"); ?><br />
+            </th>
+            <td>
+              <textarea rows="5" cols="50" name="ssi_post_purchase_survey_question_1"><?php echo esc_attr(get_option("ssi_post_purchase_survey_question_1")); ?></textarea>
+            </td>
+        </tr>
+        <tr valign="top">
+            <th scope="row">
+                <?php esc_html_e("Post purchase delivery question", "sinhro-sms-integration"); ?><br />
+            </th>
+            <td>
+              <textarea rows="5" cols="50" name="ssi_post_purchase_survey_question_2"><?php echo esc_attr(get_option("ssi_post_purchase_survey_question_2")); ?></textarea>
+            </td>
+        </tr>
+        <tr valign="top">
+            <th scope="row">
+                <?php esc_html_e("Post purchase shipping question", "sinhro-sms-integration"); ?><br />
+            </th>
+            <td>
+              <textarea rows="5" cols="50" name="ssi_post_purchase_survey_question_3"><?php echo esc_attr(get_option("ssi_post_purchase_survey_question_3")); ?></textarea>
+            </td>
+        </tr>
+        <tr valign="top">
+            <th scope="row">
+                <?php esc_html_e("Post purchase customer support question", "sinhro-sms-integration"); ?><br />
+            </th>
+            <td>
+                <textarea rows="5" cols="50" name="ssi_post_purchase_survey_question_4"><?php echo esc_attr(get_option("ssi_post_purchase_survey_question_4")); ?></textarea>
+            </td>
+        </tr>
+        <tr valign="top">
+            <th scope="row">
+                <?php esc_html_e("Post purchase recommendation question", "sinhro-sms-integration"); ?><br />
+            </th>
+            <td>
+                <textarea rows="5" cols="50" name="ssi_post_purchase_survey_question_5"><?php echo esc_attr(get_option("ssi_post_purchase_survey_question_5")); ?></textarea>
+            </td>
+        </tr>
       </table>
 
       <?php submit_button(); ?>
@@ -532,13 +647,20 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
       <?php } ?>
 
     <?php } else if ($tab === "browse-abandoned-carts") {
-      $abandoned_cart_table = new Abandoned_Cart_Admin_List_Table();
-			$abandoned_cart_table->prepare_items();
-    ?>
-
+        $abandoned_cart_table = new Abandoned_Cart_Admin_List_Table();
+        $abandoned_cart_table->prepare_items();
+      ?>
       <h3><?php esc_html_e("Currently abandoned carts", "sinhro-sms-integration"); ?><h3>
 
       <?php 			$abandoned_cart_table->display(); ?>
+
+    <?php } else if ($tab === "browse-post-purchase") {
+        $post_purchase_survey_results_table = new Post_Purchase_Survey_Results_Admin_List_Table();
+        $post_purchase_survey_results_table->prepare_items();
+      ?>
+      <h3><?php esc_html_e("Post purchase survey results", "sinhro-sms-integration"); ?><h3>
+
+      <?php 			$post_purchase_survey_results_table->display(); ?>
 
     <?php } ?>
 

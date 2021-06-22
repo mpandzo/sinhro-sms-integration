@@ -24,6 +24,14 @@ if (!defined("SINHRO_INTEGRATION_CART_TABLE_NAME")) {
   define("SINHRO_INTEGRATION_CART_TABLE_NAME", "ssi_temp_cart");
 }
 
+if (!defined("POST_PURCHASE_ENTRIES_TABLE_NAME")) {
+  define("POST_PURCHASE_ENTRIES_TABLE_NAME", "ssi_post_purchase_entries");
+}
+
+if (!defined("POST_PURCHASE_SURVEY_RESULTS_TABLE_NAME")) {
+  define("POST_PURCHASE_SURVEY_RESULTS_TABLE_NAME", "ssi_post_purchase_survey");
+}
+
 class SinhroIntegration
 {
     private $plugin_name = "SinhroIntegration";
@@ -59,6 +67,9 @@ class SinhroIntegration
         add_action("admin_init", array($this, "send_test_email"));
 
         // woocommerce related hooks
+        // order status changed (for post purchase after completed)
+        add_action("woocommerce_order_status_changed", array($this, "woocommerce_order_status_changed"), 10, 3);
+
         // create unique cart id for cart
         add_action("woocommerce_init", array($this, "woocommerce_init"), 10);
 
@@ -76,6 +87,177 @@ class SinhroIntegration
         add_action("wp", array($this, "register_cart_cron_job"));
         add_action("ssi_cart_process_sms", array($this, "cart_process_sms"));
         add_filter("cron_schedules", array($this, "add_cron_interval"));
+
+        // post purchase survey form shortcode
+        add_shortcode('post_purchase_survey', array($this, 'post_purchase_survey_function'));
+    }
+
+    function get_current_page_url() {
+        global $wp;
+        return add_query_arg( $_SERVER['QUERY_STRING'], '', home_url( $wp->request ) );
+    }
+
+    public function post_purchase_survey_function($atts = array()) {
+        global $wpdb;
+
+        $output = "";
+
+        $row_post_purchase_survey_results = false;
+        $row_post_purchase_entries = false;
+
+        if (isset($_GET["ppshash"])) {
+            $temp_cart_table_name = $wpdb->prefix . POST_PURCHASE_SURVEY_RESULTS_TABLE_NAME;
+            $row_post_purchase_survey_results = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$temp_cart_table_name} WHERE unique_hash=%s", $_GET["ppshash"]));
+
+            $temp_cart_table_name = $wpdb->prefix . POST_PURCHASE_ENTRIES_TABLE_NAME;
+            $row_post_purchase_entries = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$temp_cart_table_name} WHERE unique_hash=%s", $_GET["ppshash"]));
+        }
+
+        if (isset($_GET["ppshash"]) && !$row_post_purchase_survey_results && !$row_post_purchase_entries->survey_completed) {
+
+          ob_start();
+
+          if (isset($_POST['ssi_post_purchase_survey_nonce']) && wp_verify_nonce($_POST['ssi_post_purchase_survey_nonce'], 'ssi_post_purchase_survey')) {
+              $unique_hash = $_GET["ppshash"];
+
+              $temp_cart_table_name = $wpdb->prefix . POST_PURCHASE_ENTRIES_TABLE_NAME;
+              $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET survey_completed=1 WHERE unique_hash=%s", $unique_hash));
+
+              $question_1_answer = 0;
+              if (isset($_POST["survey_question_1"])) {
+                $question_1_answer = intval($_POST["survey_question_1"]);
+              }
+
+              $question_2_answer = 0;
+              if (isset($_POST["survey_question_2"])) {
+                $question_2_answer = intval($_POST["survey_question_2"]);
+              }
+
+              $question_3_answer = 0;
+              if (isset($_POST["survey_question_3"])) {
+                $question_3_answer = intval($_POST["survey_question_3"]);
+              }
+
+              $question_4_answer = 0;
+              if (isset($_POST["survey_question_4"])) {
+                $question_4_answer = intval($_POST["survey_question_4"]);
+              }
+
+              $question_5_answer = 0;
+              if (isset($_POST["survey_question_5"])) {
+                $question_5_answer = intval($_POST["survey_question_5"]);
+              }
+
+              $overall_rating = ($question_1_answer + $question_2_answer + $question_3_answer + $question_4_answer + $question_5_answer) / 5;
+
+              $temp_cart_table_name = $wpdb->prefix . POST_PURCHASE_SURVEY_RESULTS_TABLE_NAME;
+              $wpdb->query($wpdb->prepare("INSERT INTO $temp_cart_table_name (unique_hash, product_ids, order_id, question_1_answer, question_2_answer, question_3_answer, question_4_answer, question_5_answer, overall_rating) VALUES (%s, %s, %s, %d, %d, %d, %d, %d, %f)", $unique_hash, $row_post_purchase_entries->product_ids, $row_post_purchase_entries->order_id, $question_1_answer, $question_2_answer, $question_3_answer, $question_4_answer, $question_5_answer, $overall_rating));
+
+              ?>
+              <p>
+                <?php _e("Thank you for submitting!", "sinhro-sms-integration"); ?>
+              </p>
+              <?php
+          } else {
+              $current_url = $this->get_current_page_url();
+
+              $post_purchase_survey_question_1 = get_option("ssi_post_purchase_survey_question_1");
+              $post_purchase_survey_question_2 = get_option("ssi_post_purchase_survey_question_2");
+              $post_purchase_survey_question_3 = get_option("ssi_post_purchase_survey_question_3");
+              $post_purchase_survey_question_4 = get_option("ssi_post_purchase_survey_question_4");
+              $post_purchase_survey_question_5 = get_option("ssi_post_purchase_survey_question_5");
+          ?>
+          <form method="POST" action="<?php echo esc_url($current_url); ?>">
+              <p>
+                <?php _e("Please answer the following questions with regards your purchasing experience:", "sinhro-sms-integration"); ?>
+              </p>
+              <div>
+                <p><?php echo $post_purchase_survey_question_1; ?></p>
+                <div>
+                  <label for="survey_question_1_1">1</label>
+                  <input type="radio" name="survey_question_1" id="survey_question_1_1" value="1" />
+                  <label for="survey_question_1_2">2</label>
+                  <input type="radio" name="survey_question_1" id="survey_question_1_2" value="2" />
+                  <label for="survey_question_1_3">3</label>
+                  <input type="radio" name="survey_question_1" id="survey_question_1_3" value="3" />
+                  <label for="survey_question_1_4">4</label>
+                  <input type="radio" name="survey_question_1" id="survey_question_1_4" value="4" />
+                  <label for="survey_question_1_5">5</label>
+                  <input type="radio" name="survey_question_1" id="survey_question_1_5" value="5" />
+                </div>
+              </div>
+              <div>
+                <p><?php echo $post_purchase_survey_question_2; ?></p>
+                <div>
+                  <label for="survey_question_2_1">1</label>
+                  <input type="radio" name="survey_question_2" id="survey_question_2_1" value="1" />
+                  <label for="survey_question_2_2">2</label>
+                  <input type="radio" name="survey_question_2" id="survey_question_2_2" value="2" />
+                  <label for="survey_question_2_3">3</label>
+                  <input type="radio" name="survey_question_2" id="survey_question_2_3" value="3" />
+                  <label for="survey_question_2_4">4</label>
+                  <input type="radio" name="survey_question_2" id="survey_question_2_4" value="4" />
+                  <label for="survey_question_2_5">5</label>
+                  <input type="radio" name="survey_question_2" id="survey_question_2_5" value="5" />
+                </div>
+              </div>
+              <div>
+                <p><?php echo $post_purchase_survey_question_3; ?></p>
+                <div>
+                  <label for="survey_question_3_1">1</label>
+                  <input type="radio" name="survey_question_3" id="survey_question_3_1" value="1" />
+                  <label for="survey_question_3_2">2</label>
+                  <input type="radio" name="survey_question_3" id="survey_question_3_2" value="2" />
+                  <label for="survey_question_3_3">3</label>
+                  <input type="radio" name="survey_question_3" id="survey_question_3_3" value="3" />
+                  <label for="survey_question_3_4">4</label>
+                  <input type="radio" name="survey_question_3" id="survey_question_3_4" value="4" />
+                  <label for="survey_question_3_5">5</label>
+                  <input type="radio" name="survey_question_3" id="survey_question_3_5" value="5" />
+                </div>
+              </div>
+              <div>
+                <p><?php echo $post_purchase_survey_question_4; ?></p>
+                <div>
+                  <label for="survey_question_4_1">1</label>
+                  <input type="radio" name="survey_question_4" id="survey_question_4_1" value="1" />
+                  <label for="survey_question_4_2">2</label>
+                  <input type="radio" name="survey_question_4" id="survey_question_4_2" value="2" />
+                  <label for="survey_question_4_3">3</label>
+                  <input type="radio" name="survey_question_4" id="survey_question_4_3" value="3" />
+                  <label for="survey_question_4_4">4</label>
+                  <input type="radio" name="survey_question_4" id="survey_question_4_4" value="4" />
+                  <label for="survey_question_4_5">5</label>
+                  <input type="radio" name="survey_question_4" id="survey_question_4_5" value="5" />
+                </div>
+              </div>
+              <div>
+                <p><?php echo $post_purchase_survey_question_5; ?></p>
+                <div>
+                  <label for="survey_question_5_1">1</label>
+                  <input type="radio" name="survey_question_5" id="survey_question_5_1" value="1" />
+                  <label for="survey_question_5_2">2</label>
+                  <input type="radio" name="survey_question_5" id="survey_question_5_2" value="2" />
+                  <label for="survey_question_5_3">3</label>
+                  <input type="radio" name="survey_question_5" id="survey_question_5_3" value="3" />
+                  <label for="survey_question_5_4">4</label>
+                  <input type="radio" name="survey_question_5" id="survey_question_5_4" value="4" />
+                  <label for="survey_question_5_5">5</label>
+                  <input type="radio" name="survey_question_5" id="survey_question_5_5" value="5" />
+                </div>
+              </div>
+              <p>
+                <?php wp_nonce_field('ssi_post_purchase_survey', 'ssi_post_purchase_survey_nonce'); ?>
+                <input type="submit" value="<?php _e("Submit", "sinhro-sms-integration"); ?>">
+              </p>
+          </form>
+          <?php
+          }
+
+          $output = ob_get_clean();
+        }
+
+        return $output;
     }
 
     public function add_cron_interval($schedules)
@@ -134,7 +316,7 @@ class SinhroIntegration
 
         $temp_cart_table_name = $wpdb->prefix . SINHRO_INTEGRATION_CART_TABLE_NAME;
 
-        $this->check_and_create_db_table();
+        $this->check_and_create_db_tables();
 
         $mandrill_from_address = get_option("ssi_mandrill_from_address");
         $mandrill_api_key = get_option("ssi_mandrill_api_key");
@@ -333,7 +515,7 @@ class SinhroIntegration
 
         if (wp_verify_nonce($nonce_value, "woocommerce-process_checkout")) {
             // nonce passed, we can record the phone number and cart unique id
-            $this->check_and_create_db_table();
+            $this->check_and_create_db_tables();
 
             $temp_cart_table_name = $wpdb->prefix . SINHRO_INTEGRATION_CART_TABLE_NAME;
 
@@ -354,11 +536,13 @@ class SinhroIntegration
 
     public function plugin_activate()
     {
-        $this->check_and_create_db_table();
+        $this->check_and_create_db_tables();
     }
 
-    public function check_and_create_db_table()
+    public function check_and_create_db_tables()
     {
+        require_once(ABSPATH . "wp-admin/includes/upgrade.php");
+
         global $wpdb;
 
         $wpdb_collate = $wpdb->collate;
@@ -381,7 +565,44 @@ class SinhroIntegration
           PRIMARY KEY  (`id`)
         ) COLLATE {$wpdb_collate}";
 
-        require_once(ABSPATH . "wp-admin/includes/upgrade.php");
+        dbDelta($sql);
+
+        $temp_cart_table_name = $wpdb->prefix . POST_PURCHASE_ENTRIES_TABLE_NAME;
+
+        $sql = "CREATE TABLE {$temp_cart_table_name} (
+          id int(11) NOT NULL auto_increment,
+          order_id varchar(20) NOT NULL,
+          product_ids TEXT NOT NULL,
+          unique_hash varchar(50) NOT NULL,
+          created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          survey_completed BIT NOT NULL DEFAULT 0,
+          email_1_sent BIT NOT NULL DEFAULT 0,
+          sms_1_sent BIT NOT NULL DEFAULT 0,
+          sms_send_errors INT(1) NOT NULL DEFAULT 0,
+          phone varchar(20) NOT NULL,
+          email_address varchar(100) NOT NULL,
+          first_name varchar(100) NOT NULL,
+          PRIMARY KEY  (`id`)
+        ) COLLATE {$wpdb_collate}";
+
+        dbDelta($sql);
+
+        $temp_cart_table_name = $wpdb->prefix . POST_PURCHASE_SURVEY_RESULTS_TABLE_NAME;
+
+        $sql = "CREATE TABLE {$temp_cart_table_name} (
+          id int(11) NOT NULL auto_increment,
+          unique_hash varchar(50) NOT NULL,
+          order_id varchar(20) NOT NULL,
+          product_ids TEXT NOT NULL,
+          created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          question_1_answer INT NOT NULL,
+          question_2_answer INT NOT NULL,
+          question_3_answer INT NOT NULL,
+          question_4_answer INT NOT NULL,
+          question_5_answer INT NOT NULL,
+          overall_rating FLOAT NOT NULL,
+          PRIMARY KEY  (`id`)
+        ) COLLATE {$wpdb_collate}";
 
         dbDelta($sql);
     }
@@ -390,9 +611,10 @@ class SinhroIntegration
     {
         global $wpdb;
 
-        require_once ABSPATH . "wp-admin/includes/upgrade.php";
-
         $temp_cart_table_name = $wpdb->prefix . SINHRO_INTEGRATION_CART_TABLE_NAME;
+        $wpdb->query("DROP TABLE IF EXISTS " . $temp_cart_table_name);
+
+        $temp_cart_table_name = $wpdb->prefix . POST_PURCHASE_ENTRIES_TABLE_NAME;
         $wpdb->query("DROP TABLE IF EXISTS " . $temp_cart_table_name);
     }
 
@@ -401,7 +623,7 @@ class SinhroIntegration
         global $wpdb;
 
         if (WC()->session) {
-            $this->check_and_create_db_table();
+            $this->check_and_create_db_tables();
 
             $temp_cart_table_name = $wpdb->prefix . SINHRO_INTEGRATION_CART_TABLE_NAME;
             $unique_cart_id = WC()->session->get("cart_unique_id");
@@ -409,6 +631,40 @@ class SinhroIntegration
 
             if ($row) {
                 $wpdb->query($wpdb->prepare("DELETE FROM " . $temp_cart_table_name . " WHERE abandoned_cart_id=%s", $unique_cart_id));
+            }
+        }
+    }
+
+    public function woocommerce_order_status_changed($order_id, $old_status, $new_status) {
+        global $wpdb;
+        if ($old_status != "completed" && $new_status == "completed") {
+            $order = wc_get_order($order_id);
+
+            if ($order && $order->has_status('completed') ) {
+                $order_data = $order->get_data();
+
+                if ($order_data) {
+                    $order_billing_first_name = isset($order_data['billing']) && isset($order_data['billing']['first_name']) ? $order_data['billing']['first_name'] : '';
+                    $order_billing_email = isset($order_data['billing']) && isset($order_data['billing']['email']) ? $order_data['billing']['email'] : '';
+                    $order_billing_phone  = isset($order_data['billing']) && isset($order_data['billing']['phone']) ? $order_data['billing']['phone'] : '';
+
+                    $hashed_product_ids = array();
+                    foreach ($order->get_items() as $item_key => $item ) {
+                      $product_id   = $item->get_product_id(); // the Product id
+                      $hashed_product_ids[] = md5($product_id);
+                    }
+
+                    $hashed_product_ids_string = implode(":", $hashed_product_ids);
+
+                    $temp_cart_table_name = $wpdb->prefix . POST_PURCHASE_ENTRIES_TABLE_NAME;
+                    $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$temp_cart_table_name} WHERE order_id=%s", $order_id));
+
+                    if (!$row || !$row->survey_completed) {
+                      $unique_hash = md5($order_id . '_' . date("Y-m-d H:i:s"));
+
+                      $wpdb->query($wpdb->prepare("INSERT INTO $temp_cart_table_name (order_id, product_ids, unique_hash, phone, email_address, first_name) VALUES (%s, %s, %s, %s, %s, %s)", $order_id, $hashed_product_ids_string, $unique_hash, $order_billing_phone, $order_billing_email, $order_billing_first_name));
+                    }
+                }
             }
         }
     }
@@ -732,12 +988,15 @@ class SinhroIntegration
 
     public function register_sinhro_sms_integration_settings()
     {
+        register_setting("sinhro-times-integration-settings", "ssi_post_purchase_email_1_minutes");
         register_setting("sinhro-times-integration-settings", "ssi_email_1_minutes");
         register_setting("sinhro-times-integration-settings", "ssi_email_2_minutes");
         register_setting("sinhro-times-integration-settings", "ssi_email_3_minutes");
+        register_setting("sinhro-times-integration-settings", "ssi_post_purchase_sms_1_minutes");
         register_setting("sinhro-times-integration-settings", "ssi_sms_1_minutes");
         register_setting("sinhro-times-integration-settings", "ssi_sms_2_minutes");
 
+        register_setting("sinhro-sms-integration-settings", "ssi_post_purchase_sms_survey_page_url");
         register_setting("sinhro-sms-integration-settings", "ssi_api_cart_url_1");
         register_setting("sinhro-sms-integration-settings", "ssi_api_cart_url_2");
         register_setting("sinhro-sms-integration-settings", "ssi_api_host");
@@ -753,10 +1012,19 @@ class SinhroIntegration
 
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_1_subject");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_1_message");
+        register_setting("sinhro-email-integration-settings", "ssi_mandrill_post_purchase_email_1_survey_page_url");
+        register_setting("sinhro-email-integration-settings", "ssi_mandrill_post_purchase_email_1_subject");
+        register_setting("sinhro-email-integration-settings", "ssi_mandrill_post_purchase_email_1_message");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_2_subject");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_2_message");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_3_subject");
         register_setting("sinhro-email-integration-settings", "ssi_mandrill_email_3_message");
+
+        register_setting("sinhro-post-purchase-settings", "ssi_post_purchase_survey_question_1");
+        register_setting("sinhro-post-purchase-settings", "ssi_post_purchase_survey_question_2");
+        register_setting("sinhro-post-purchase-settings", "ssi_post_purchase_survey_question_3");
+        register_setting("sinhro-post-purchase-settings", "ssi_post_purchase_survey_question_4");
+        register_setting("sinhro-post-purchase-settings", "ssi_post_purchase_survey_question_5");
 
         register_setting("sinhro-email-template-integration-settings", "ssi_mandrill_options_header_color");
         register_setting("sinhro-email-template-integration-settings", "ssi_mandrill_options_footer_color");
@@ -778,7 +1046,7 @@ class SinhroIntegration
 
     public function load_plugin_textdomain()
     {
-        $this->check_and_create_db_table();
+        $this->check_and_create_db_tables();
 
         load_plugin_textdomain("sinhro-sms-integration", false, dirname(plugin_basename(__FILE__)) . "/languages");
     }
