@@ -5,7 +5,12 @@ To begin using please navigate to /wp-admin/admin.php?page=SinhroIntegration and
 
 Note: the plugin is only usable when WooCommerce is installed and activated.
 
-Ideas for further development:
+# Post purchase functionality
 
-- gdpr compliance for temp data stored in abandoned carts table
-- option for message that is sent as reminder via sms for abandoned carts... currently it is hardcoded as a constant SINHRO_SMS_REMINDER_MESSAGE
+## relevant urls
+/wp-admin/admin.php?page=SinhroIntegration&tab=post-purchase
+/wp-admin/admin.php?page=SinhroIntegration&tab=browse-post-purchase
+
+## shortcode examples:
+[post_purchase_survey]
+[post_purchase_survey_results productid="23"]
