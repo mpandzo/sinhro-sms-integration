@@ -651,16 +651,40 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
         $abandoned_cart_table->prepare_items();
       ?>
       <h3><?php esc_html_e("Currently abandoned carts", "sinhro-sms-integration"); ?><h3>
-
-      <?php 			$abandoned_cart_table->display(); ?>
+      <?php	$abandoned_cart_table->display(); ?>
 
     <?php } else if ($tab === "browse-post-purchase") {
         $post_purchase_survey_results_table = new Post_Purchase_Survey_Results_Admin_List_Table();
         $post_purchase_survey_results_table->prepare_items();
-      ?>
-      <h3><?php esc_html_e("Post purchase survey results", "sinhro-sms-integration"); ?><h3>
 
-      <?php 			$post_purchase_survey_results_table->display(); ?>
+        $products = array();
+        if (function_exists('wc_get_products')) {
+          $products = wc_get_products(array(
+            'limit'  => -1, // All products
+            'status' => 'publish', // Only published products
+            'orderby' => array('name' => 'ASC')
+          ) );
+        }
+      ?>
+      <script>
+      (function ($) {
+        let currentUrl = '<?php echo wc_get_current_admin_url(); ?>';
+        $(document).ready(function () {
+          $('#products_filter').on('change', function(e) {
+            window.location = currentUrl + '&productid=' + this.options[this.selectedIndex].value;
+          });
+        });
+      }(jQuery));
+      </script>
+      <h3><?php esc_html_e("Post purchase survey results", "sinhro-sms-integration"); ?><h3>
+      <label for="products_filter"><?php _e("Filter by product", "sinhro-sms-integration"); ?></label>
+      <select id="products_filter">
+        <option value=""><?php _e("Show all products", "sinhro-sms-integration"); ?></option>
+        <?php foreach ($products as $product) { ?>
+          <option <?php echo isset($_GET["productid"]) && $_GET["productid"] == md5($product->get_id()) ? "selected": ""; ?> value="<?php echo md5($product->get_id()); ?>"><?php echo $product->get_name(); ?></option>
+        <?php } ?>
+      </select>
+      <?php	$post_purchase_survey_results_table->display(); ?>
 
     <?php } ?>
 

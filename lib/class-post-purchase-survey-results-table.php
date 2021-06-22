@@ -175,6 +175,8 @@ class Post_Purchase_Survey_Results_Admin_List_Table extends WP_List_Table {
 		// Page number
 		if(empty($paged) || !is_numeric($paged) || $paged<=0 ) { $paged=1; }
 
+    $productid_filter = !empty($_GET["productid"]) ? esc_sql($_GET["productid"]) : '';
+
 		$author_id = null;
 		if (!(current_user_can('editor') || current_user_can('administrator'))) {
 			$author_id = get_current_user_id();
@@ -183,6 +185,12 @@ class Post_Purchase_Survey_Results_Admin_List_Table extends WP_List_Table {
     $temp_cart_table_name = $wpdb->prefix . POST_PURCHASE_SURVEY_RESULTS_TABLE_NAME;
 
     $sql = "SELECT * FROM {$temp_cart_table_name} WHERE 1=1 ";
+
+    $where_sql = "";
+    if (!empty($productid_filter)) {
+      $where_sql .= " AND product_ids LIKE '%$productid_filter%' ";
+    }
+    $sql .= $where_sql;
 
 		if(!empty($orderby) & !empty($order)) {
 			$sql .= " ORDER BY $orderby $order ";
@@ -195,7 +203,7 @@ class Post_Purchase_Survey_Results_Admin_List_Table extends WP_List_Table {
       $sql .= $wpdb->prepare(" LIMIT 0, %d ", $per_page);
     }
 
-    $totalitems = $wpdb->get_var("SELECT COUNT(*) FROM $temp_cart_table_name");
+    $totalitems = $wpdb->get_var("SELECT COUNT(*) FROM $temp_cart_table_name WHERE 1=1 " . $where_sql);
     $results = $wpdb->get_results($sql);
 
 		//How many pages do we have in total?
