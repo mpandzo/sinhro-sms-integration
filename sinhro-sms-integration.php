@@ -91,11 +91,41 @@ class SinhroIntegration
 
         // post purchase survey form shortcode
         add_shortcode('post_purchase_survey', array($this, 'post_purchase_survey_shortcode_function'));
+        add_shortcode('post_purchase_survey_results', array($this, 'post_purchase_survey_results_shortcode_function'));
     }
 
     function get_current_page_url() {
         global $wp;
         return add_query_arg( $_SERVER['QUERY_STRING'], '', home_url( $wp->request ) );
+    }
+
+    public function post_purchase_survey_results_shortcode_function($atts = array()) {
+      global $wpdb;
+
+      $output = "";
+
+      $atts = shortcode_atts( array(
+        'productid' => 0,
+      ), $atts );
+
+      if (isset($atts["productid"])) {
+          $product_id = intval($atts["productid"]);
+          if ($product_id > 0) {
+            $temp_cart_table_name = $wpdb->prefix . POST_PURCHASE_SURVEY_RESULTS_TABLE_NAME;
+            $results = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$temp_cart_table_name} WHERE product_ids LIKE '%%%s%'", md5($product_id)));
+            $count_results = count($results);
+            $score_sum = 0;
+            if ($count_results) {
+              foreach ($results as $result) {
+                $score_sum += $result->overall_rating;
+              }
+
+              $output = sprintf(__("This product has an average rating of %.2f based on a survey of %d people", "sinhro-sms-integration"), $score_sum/$count_results, $count_results);
+            }
+          }
+      }
+
+      return $output;
     }
 
     public function post_purchase_survey_shortcode_function($atts = array()) {

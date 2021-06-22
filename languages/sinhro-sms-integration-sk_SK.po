@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sinhro Integration\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-08 02:15+1000\n"
+"POT-Creation-Date: 2021-06-22 23:03+1000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Mirza Pandzo <mpandzo@gmail.com>\n"
 "Language-Team: Mirza Pandzo <mpandzo@gmail.com>\n"
@@ -18,10 +18,12 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 
 #: lib/class-abandoned-carts-table.php:124
+#: lib/class-post-purchase-survey-results-table.php:115
 msgid "Id"
 msgstr ""
 
 #: lib/class-abandoned-carts-table.php:125
+#: lib/class-post-purchase-survey-results-table.php:116
 msgid "Created"
 msgstr ""
 
@@ -61,271 +63,584 @@ msgstr ""
 msgid "First Name"
 msgstr ""
 
-#: partials/admin-settings.php:14
+#: lib/class-post-purchase-survey-results-table.php:117
+msgid "Quality"
+msgstr ""
+
+#: lib/class-post-purchase-survey-results-table.php:118
+msgid "Delivery"
+msgstr ""
+
+#: lib/class-post-purchase-survey-results-table.php:119
+msgid "Shipping"
+msgstr ""
+
+#: lib/class-post-purchase-survey-results-table.php:120
+msgid "Customer Support"
+msgstr ""
+
+#: lib/class-post-purchase-survey-results-table.php:121
+msgid "Recommendation"
+msgstr ""
+
+#: lib/class-post-purchase-survey-results-table.php:122
+msgid "Overall"
+msgstr ""
+
+#: lib/class-post-purchase-survey-results-table.php:123
+msgid "Order Id"
+msgstr ""
+
+#: partials/admin-settings.php:15
 msgid "Sinhro Integration settings"
 msgstr ""
 
-#: partials/admin-settings.php:18
+#: partials/admin-settings.php:19
 msgid "Sending times"
 msgstr ""
 
-#: partials/admin-settings.php:19 partials/admin-settings.php:97
+#: partials/admin-settings.php:20 partials/admin-settings.php:121
 msgid "Sms settings"
 msgstr ""
 
-#: partials/admin-settings.php:20
+#: partials/admin-settings.php:21
 msgid "Test sms"
 msgstr ""
 
-#: partials/admin-settings.php:21 partials/admin-settings.php:150
+#: partials/admin-settings.php:22 partials/admin-settings.php:382
 msgid "Email settings"
 msgstr ""
 
-#: partials/admin-settings.php:22
+#: partials/admin-settings.php:23
+msgid "Email template settings"
+msgstr ""
+
+#: partials/admin-settings.php:24
 msgid "Test email"
 msgstr ""
 
-#: partials/admin-settings.php:23
+#: partials/admin-settings.php:25
 msgid "Browse abandoned carts"
 msgstr ""
 
-#: partials/admin-settings.php:33
-msgid "Sending time settings"
+#: partials/admin-settings.php:26 partials/admin-settings.php:528
+msgid "Post purchase settings"
+msgstr ""
+
+#: partials/admin-settings.php:27
+msgid "Browse post purchase survey results"
 msgstr ""
 
 #: partials/admin-settings.php:37
+msgid "Sending time settings"
+msgstr ""
+
+#: partials/admin-settings.php:41
 msgid "Email 1 time"
 msgstr ""
 
-#: partials/admin-settings.php:38
+#: partials/admin-settings.php:42
 msgid "Time in minutes after cart is abandoned that we send the first email"
 msgstr ""
 
-#: partials/admin-settings.php:42
+#: partials/admin-settings.php:46 partials/admin-settings.php:96
 msgid "Default: 15"
 msgstr ""
 
-#: partials/admin-settings.php:47
+#: partials/admin-settings.php:51
 msgid "Sms 1 time"
 msgstr ""
 
-#: partials/admin-settings.php:48
+#: partials/admin-settings.php:52
 msgid "Time in minutes after cart is abandoned that we send the first sms"
 msgstr ""
 
-#: partials/admin-settings.php:52
+#: partials/admin-settings.php:56 partials/admin-settings.php:106
 msgid "Default: 1440 - ie 24 hours (60x24)"
 msgstr ""
 
-#: partials/admin-settings.php:57
+#: partials/admin-settings.php:61
 msgid "Email 2 time"
 msgstr ""
 
-#: partials/admin-settings.php:58
+#: partials/admin-settings.php:62
 msgid "Time in minutes after cart is abandoned that we send the second email"
 msgstr ""
 
-#: partials/admin-settings.php:62
+#: partials/admin-settings.php:66
 msgid "Default: 1920 - ie 32 hours (60x32)"
 msgstr ""
 
-#: partials/admin-settings.php:67
+#: partials/admin-settings.php:71
 msgid "Sms 2 time"
 msgstr ""
 
-#: partials/admin-settings.php:68
+#: partials/admin-settings.php:72
 msgid "Time in minutes after cart is abandoned that we send the second sms"
 msgstr ""
 
-#: partials/admin-settings.php:72
+#: partials/admin-settings.php:76
 msgid "Default: 2880 - ie 48 hours (60x48)"
 msgstr ""
 
-#: partials/admin-settings.php:77
+#: partials/admin-settings.php:81
 msgid "Email 3 time"
 msgstr ""
 
-#: partials/admin-settings.php:78
+#: partials/admin-settings.php:82
 msgid "Time in minutes after cart is abandoned that we send the third email"
 msgstr ""
 
-#: partials/admin-settings.php:82
+#: partials/admin-settings.php:86
 msgid "Default: 3840 - ie 64 hours (60x64)"
 msgstr ""
 
+#: partials/admin-settings.php:91
+msgid "Post Purchase Email 1 time"
+msgstr ""
+
+#: partials/admin-settings.php:92
+msgid ""
+"Time in minutes after order is marked Completed that that we send the first "
+"post purchase email"
+msgstr ""
+
 #: partials/admin-settings.php:101
-msgid "Api host"
+msgid "Post Purchase Sms 1 time"
 msgstr ""
 
 #: partials/admin-settings.php:102
-msgid "Override default host"
-msgstr ""
-
-#: partials/admin-settings.php:106
-msgid "Default: http://gw.sinhro.si/api/http"
-msgstr ""
-
-#: partials/admin-settings.php:112
-msgid "Api username"
-msgstr ""
-
-#: partials/admin-settings.php:116
-msgid "Your gw.sinhro.si API username"
-msgstr ""
-
-#: partials/admin-settings.php:121
-msgid "Api password"
+msgid ""
+"Time in minutes after order is marked Completed that we send the first post "
+"purchase sms"
 msgstr ""
 
 #: partials/admin-settings.php:125
-msgid "Your gw.sinhro.si API password"
+msgid "Api host"
+msgstr ""
+
+#: partials/admin-settings.php:126
+msgid "Override default host"
 msgstr ""
 
 #: partials/admin-settings.php:130
-msgid "Discount value override"
+msgid "Default: http://gw.sinhro.si/api/http"
 msgstr ""
 
-#: partials/admin-settings.php:131
-msgid "Override default discount value"
+#: partials/admin-settings.php:136
+msgid "Api username"
 msgstr ""
 
-#: partials/admin-settings.php:135
-msgid "Default: 20"
+#: partials/admin-settings.php:140
+msgid "Your gw.sinhro.si API username"
+msgstr ""
+
+#: partials/admin-settings.php:145
+msgid "Api password"
+msgstr ""
+
+#: partials/admin-settings.php:149
+msgid "Your gw.sinhro.si API password"
 msgstr ""
 
 #: partials/admin-settings.php:154
-msgid "Mandrill api key"
+msgid "Discount value override"
 msgstr ""
 
-#: partials/admin-settings.php:158
-msgid "Your Mandrill API key"
+#: partials/admin-settings.php:155
+msgid "Override default discount value"
 msgstr ""
 
-#: partials/admin-settings.php:163
-msgid "Mandrill from address"
+#: partials/admin-settings.php:159
+msgid "Default: 20"
 msgstr ""
 
-#: partials/admin-settings.php:167
-msgid "Your Mandrill from email address"
+#: partials/admin-settings.php:164
+msgid "First sms cart url"
 msgstr ""
 
-#: partials/admin-settings.php:172
-msgid "Mandrill first email subject"
+#: partials/admin-settings.php:165
+msgid "Override default first sms cart url (woocommerce cart url)"
 msgstr ""
 
-#: partials/admin-settings.php:176
-msgid "The first email subject"
+#: partials/admin-settings.php:169 partials/admin-settings.php:410
+#: partials/admin-settings.php:438 partials/admin-settings.php:466
+msgid "Default: http://yourdomain.com/cart"
 msgstr ""
 
-#: partials/admin-settings.php:181
-msgid "Mandrill first email message"
+#: partials/admin-settings.php:174
+msgid "Second sms cart url"
+msgstr ""
+
+#: partials/admin-settings.php:175
+msgid "Override default second cart url (woocommerce cart url)"
+msgstr ""
+
+#: partials/admin-settings.php:179
+#, php-format
+msgid "Default: http://yourdomain.com/cart?c=%s"
 msgstr ""
 
 #: partials/admin-settings.php:185
-msgid "The first email message"
+msgid "Post purchase first sms survey page url"
 msgstr ""
 
-#: partials/admin-settings.php:190
-msgid "Mandrill second email subject"
+#: partials/admin-settings.php:201
+msgid ""
+"Note: all image URL's MUST be in either .png or .jpg format because most "
+"email clients are unable to render .svg images."
 msgstr ""
 
-#: partials/admin-settings.php:194
-msgid "The second email subject"
+#: partials/admin-settings.php:207
+msgid "Header color"
 msgstr ""
 
-#: partials/admin-settings.php:199
-msgid "Mandrill second email message"
-msgstr ""
-
-#: partials/admin-settings.php:203
-msgid "The second email message"
-msgstr ""
-
-#: partials/admin-settings.php:208
-msgid "Mandrill third email subject"
-msgstr ""
-
-#: partials/admin-settings.php:212
-msgid "The third email subject"
+#: partials/admin-settings.php:211
+msgid "The hex code for header (e.g. #ffffff)"
 msgstr ""
 
 #: partials/admin-settings.php:217
-msgid "Mandrill third email message"
+msgid "Footer color"
 msgstr ""
 
 #: partials/admin-settings.php:221
-msgid "The third email message"
+msgid "The hex code for footer (e.g. #ffffff)"
 msgstr ""
 
-#: partials/admin-settings.php:234
-msgid "Send test sms"
+#: partials/admin-settings.php:227
+msgid "Header logo URL"
 msgstr ""
 
-#: partials/admin-settings.php:238
-msgid "Phone number"
+#: partials/admin-settings.php:231
+msgid "The URL for header logo"
 msgstr ""
 
-#: partials/admin-settings.php:242
-msgid "The phone number to send test SMS to with leading 0s, e.g. 003861234567"
+#: partials/admin-settings.php:237
+msgid "Footer image URL"
+msgstr ""
+
+#: partials/admin-settings.php:241
+msgid "The URL for footer image"
 msgstr ""
 
 #: partials/admin-settings.php:247
-msgid "SMS message"
+msgid "Footer headline"
 msgstr ""
 
 #: partials/admin-settings.php:251
+msgid "The headline for footer"
+msgstr ""
+
+#: partials/admin-settings.php:257
+msgid "Facebook url"
+msgstr ""
+
+#: partials/admin-settings.php:262
+msgid "The URL for facebook link"
+msgstr ""
+
+#: partials/admin-settings.php:268
+msgid "Facebook img"
+msgstr ""
+
+#: partials/admin-settings.php:273
+msgid "The URL for facebook image"
+msgstr ""
+
+#: partials/admin-settings.php:279
+msgid "Instagram url"
+msgstr ""
+
+#: partials/admin-settings.php:284
+msgid "The URL for instagram link"
+msgstr ""
+
+#: partials/admin-settings.php:290
+msgid "Instagram img"
+msgstr ""
+
+#: partials/admin-settings.php:295
+msgid "The URL for instagram image"
+msgstr ""
+
+#: partials/admin-settings.php:301
+msgid "Twitter url"
+msgstr ""
+
+#: partials/admin-settings.php:306
+msgid "The URL for twitter link"
+msgstr ""
+
+#: partials/admin-settings.php:312
+msgid "Twitter img"
+msgstr ""
+
+#: partials/admin-settings.php:317
+msgid "The URL for twitter image"
+msgstr ""
+
+#: partials/admin-settings.php:323
+msgid "For any questions please send an email to"
+msgstr ""
+
+#: partials/admin-settings.php:333
+msgid "Footer first link URL"
+msgstr ""
+
+#: partials/admin-settings.php:343
+msgid "Footer first link text"
+msgstr ""
+
+#: partials/admin-settings.php:353
+msgid "Footer second link URL"
+msgstr ""
+
+#: partials/admin-settings.php:363
+msgid "Footer second link text"
+msgstr ""
+
+#: partials/admin-settings.php:386
+msgid "Mandrill api key"
+msgstr ""
+
+#: partials/admin-settings.php:390
+msgid "Your Mandrill API key"
+msgstr ""
+
+#: partials/admin-settings.php:395
+msgid "Mandrill from address"
+msgstr ""
+
+#: partials/admin-settings.php:399
+msgid "Your Mandrill from email address"
+msgstr ""
+
+#: partials/admin-settings.php:405
+msgid "First email cart url"
+msgstr ""
+
+#: partials/admin-settings.php:406
+msgid "Override default first email cart url (woocommerce cart url)"
+msgstr ""
+
+#: partials/admin-settings.php:415
+msgid "Mandrill first email subject"
+msgstr ""
+
+#: partials/admin-settings.php:419
+msgid "The first email subject"
+msgstr ""
+
+#: partials/admin-settings.php:424
+msgid "Mandrill first email message"
+msgstr ""
+
+#: partials/admin-settings.php:428
+msgid "The first email message"
+msgstr ""
+
+#: partials/admin-settings.php:433
+msgid "Second email cart url"
+msgstr ""
+
+#: partials/admin-settings.php:434
+msgid "Override default second email cart url (woocommerce cart url)"
+msgstr ""
+
+#: partials/admin-settings.php:443
+msgid "Mandrill second email subject"
+msgstr ""
+
+#: partials/admin-settings.php:447
+msgid "The second email subject"
+msgstr ""
+
+#: partials/admin-settings.php:452
+msgid "Mandrill second email message"
+msgstr ""
+
+#: partials/admin-settings.php:456
+msgid "The second email message"
+msgstr ""
+
+#: partials/admin-settings.php:461
+msgid "Third email cart url"
+msgstr ""
+
+#: partials/admin-settings.php:462
+msgid "Override default third email cart url (woocommerce cart url)"
+msgstr ""
+
+#: partials/admin-settings.php:471
+msgid "Mandrill third email subject"
+msgstr ""
+
+#: partials/admin-settings.php:475
+msgid "The third email subject"
+msgstr ""
+
+#: partials/admin-settings.php:480
+msgid "Mandrill third email message"
+msgstr ""
+
+#: partials/admin-settings.php:484
+msgid "The third email message"
+msgstr ""
+
+#: partials/admin-settings.php:490
+msgid "Mandrill Post Purchase first email survey page url"
+msgstr ""
+
+#: partials/admin-settings.php:494
+msgid "The first Post Purchase email survey page url"
+msgstr ""
+
+#: partials/admin-settings.php:499
+msgid "Mandrill Post Purchase first email subject"
+msgstr ""
+
+#: partials/admin-settings.php:503
+msgid "The first Post Purchase email subject"
+msgstr ""
+
+#: partials/admin-settings.php:508
+msgid "Mandrill Post Purchase first email message"
+msgstr ""
+
+#: partials/admin-settings.php:512
+msgid "The first Post Purchase email message"
+msgstr ""
+
+#: partials/admin-settings.php:532
+msgid "Post purchase quality question"
+msgstr ""
+
+#: partials/admin-settings.php:540
+msgid "Post purchase delivery question"
+msgstr ""
+
+#: partials/admin-settings.php:548
+msgid "Post purchase shipping question"
+msgstr ""
+
+#: partials/admin-settings.php:556
+msgid "Post purchase customer support question"
+msgstr ""
+
+#: partials/admin-settings.php:564
+msgid "Post purchase recommendation question"
+msgstr ""
+
+#: partials/admin-settings.php:580
+msgid "Send test sms"
+msgstr ""
+
+#: partials/admin-settings.php:584
+msgid "Phone number"
+msgstr ""
+
+#: partials/admin-settings.php:588
+msgid "The phone number to send test SMS to with leading 0s, e.g. 003861234567"
+msgstr ""
+
+#: partials/admin-settings.php:593
+msgid "SMS message"
+msgstr ""
+
+#: partials/admin-settings.php:597
 msgid "Default: 12345"
 msgstr ""
 
-#: partials/admin-settings.php:258
+#: partials/admin-settings.php:604
 msgid ""
 "Please make sure your sinhro sms username and password are provided in the "
 "Sms settings tab!"
 msgstr ""
 
-#: partials/admin-settings.php:266
+#: partials/admin-settings.php:612
 msgid "Send test email"
 msgstr ""
 
-#: partials/admin-settings.php:270
+#: partials/admin-settings.php:616
 msgid "To email address"
 msgstr ""
 
-#: partials/admin-settings.php:274
+#: partials/admin-settings.php:620
 msgid "The email address to send the test message to"
 msgstr ""
 
-#: partials/admin-settings.php:279
+#: partials/admin-settings.php:625
 msgid "Email subject"
 msgstr ""
 
-#: partials/admin-settings.php:283
+#: partials/admin-settings.php:629
 msgid "The email test subject to send"
 msgstr ""
 
-#: partials/admin-settings.php:288
-msgid "Email message"
+#: partials/admin-settings.php:635
+msgid "Email content"
 msgstr ""
 
-#: partials/admin-settings.php:292
-msgid "The email test message to send"
+#: partials/admin-settings.php:639
+msgid "The main email content to send"
 msgstr ""
 
-#: partials/admin-settings.php:299
+#: partials/admin-settings.php:646
 msgid ""
 "Please make sure your mandrill api key and from email address are provided "
 "in the Email settings tab!"
 msgstr ""
 
-#: partials/admin-settings.php:307
+#: partials/admin-settings.php:653
 msgid "Currently abandoned carts"
 msgstr ""
 
-#: sinhro-sms-integration.php:85
+#: partials/admin-settings.php:679
+msgid "Post purchase survey results"
+msgstr ""
+
+#: partials/admin-settings.php:680
+msgid "Filter by product"
+msgstr ""
+
+#: partials/admin-settings.php:682
+msgid "Show all products"
+msgstr ""
+
+#: sinhro-sms-integration.php:123
+#, php-format
+msgid ""
+"This product has an average rating of %.2f based on a survey of %d people"
+msgstr ""
+
+#: sinhro-sms-integration.php:189
+msgid "Thank you for submitting!"
+msgstr ""
+
+#: sinhro-sms-integration.php:203
+msgid ""
+"Please answer the following questions with regards your purchasing "
+"experience:"
+msgstr ""
+
+#: sinhro-sms-integration.php:282
+msgid "Submit"
+msgstr ""
+
+#: sinhro-sms-integration.php:298
 msgid "Every Five Minutes"
 msgstr ""
 
-#: sinhro-sms-integration.php:171
+#: sinhro-sms-integration.php:303
+msgid "Every Seven Minutes"
+msgstr ""
+
+#: sinhro-sms-integration.php:414
+#, php-format
+msgid "Your order is complete! Please take a few minutes to do our survey: %s"
+msgstr ""
+
+#: sinhro-sms-integration.php:523
 #, php-format
 msgid ""
 "Oops! You left something in your cart! You can finish what you started here: "
@@ -334,31 +649,31 @@ msgstr ""
 "Ups! Nechali ste nieco vo svojom kosiku! Tu mozete dokoncit to, co ste "
 "zacali: %s"
 
-#: sinhro-sms-integration.php:203
+#: sinhro-sms-integration.php:570
 #, php-format
 msgid "Hey %s, get %d%% OFF your purchase. Hurry, before it expires: %s"
 msgstr ""
 "Dobry den %s, ziskajte ZLAVU %d%% na vas nakup. Poponahlajte sa, kym "
 "nevyprsi jej platnost: %s"
 
-#: sinhro-sms-integration.php:533
+#: sinhro-sms-integration.php:1038
 msgid "Success: test message successfully sent!"
 msgstr ""
 
-#: sinhro-sms-integration.php:540 sinhro-sms-integration.php:591
+#: sinhro-sms-integration.php:1045 sinhro-sms-integration.php:1092
 msgid ""
 "There has been an error when trying to send a test SMS. Please make sure all "
 "test SMS fields are filled in before attempting to send!"
 msgstr ""
 
-#: sinhro-sms-integration.php:577
+#: sinhro-sms-integration.php:1078
 msgid "Success. Test SMS sent!"
 msgstr ""
 
-#: sinhro-sms-integration.php:583
+#: sinhro-sms-integration.php:1084
 msgid "Error. Test SMS failed to send!"
 msgstr ""
 
-#: sinhro-sms-integration.php:643
+#: sinhro-sms-integration.php:1180
 msgid "Sinhro Integration"
 msgstr ""
