@@ -325,7 +325,7 @@ class SinhroIntegration
 
         $results = $wpdb->get_results($wpdb->prepare("
           SELECT * FROM $temp_cart_table_name
-          WHERE email_1_sent = 1 AND sms_1_sent = 0 AND phone != '' AND survey_completed = 0 AND created < DATE_SUB(NOW(), INTERVAL %d MINUTE)", $interval_minutes));
+          WHERE email_1_sent = 1 AND sms_1_sent = 0 AND phone != '' AND survey_completed = 0 AND sms_send_errors < 3 AND created < DATE_SUB(NOW(), INTERVAL %d MINUTE)", $interval_minutes));
 
         return $results;
     }
@@ -396,7 +396,9 @@ class SinhroIntegration
 
         if ($results && !is_wp_error($results) && count($results) > 0) {
           foreach ($results as $result) {
-            $options['content'] = stripslashes(sprintf($email_1_message, $email_1_survey_page_url));
+            $survey_page_url = add_query_arg("ppshash", $result->unique_hash, $email_1_survey_page_url);
+
+            $options['content'] = stripslashes(sprintf($email_1_message, $survey_page_url));
 
             $this->send_email($result->email_address, $email_1_subject, $options);
 
@@ -405,19 +407,21 @@ class SinhroIntegration
         }
       }
 
-
       if (strlen($sms_1_survey_page_url) > 0) {
         $results = $this->get_post_purchase_sms_1_entries($sms_1_minutes ? $sms_1_minutes : 1440);
 
         if ($results && !is_wp_error($results) && count($results) > 0) {
           foreach ($results as $result) {
-            $response = $this->send_sms($result->phone, sprintf(esc_html__("Your order is complete! Please take a few minutes to do our survey: %s", "sinhro-sms-integration"), $sms_1_survey_page_url));
+            $survey_page_url = add_query_arg("ppshash", $result->unique_hash, $sms_1_survey_page_url);
+            $sms_message = sprintf(esc_html__("Your order is complete! Please take a few minutes to do our survey: %s", "sinhro-sms-integration"), $survey_page_url);
+            $response = $this->send_sms($result->phone, $sms_message);
 
             if (!is_wp_error($response) && $response && isset($response["body"]) && $response["body"] == "Result_code: 00, Message OK") {
                 $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_1_sent=1 WHERE id=%d", $result->id));
             } else {
                 $wpdb->query($wpdb->prepare("UPDATE $temp_cart_table_name SET sms_send_errors=sms_send_errors+1 WHERE id=%d", $result->id));
                 error_log("Error, sms 1 not sent to $result->phone\n\r", 3, $this->plugin_log_file);
+                error_log($sms_message);
                 error_log(serialize($response), 3, $this->plugin_log_file);
             }
           }

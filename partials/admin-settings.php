@@ -6,6 +6,7 @@ if ( ! current_user_can( 'manage_options' ) ) {
 }
 
 require_once(__DIR__ . "/../lib/class-abandoned-carts-table.php");
+require_once(__DIR__ . "/../lib/class-post-purchase-entries-table.php");
 require_once(__DIR__ . "/../lib/class-post-purchase-survey-results-table.php");
 
 //Get the active tab from the $_GET param
@@ -23,7 +24,8 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
       <a href="<?php echo wc_get_current_admin_url() ?>&tab=email-template" class="nav-tab <?php if($tab==='email-template'):?>nav-tab-active<?php endif; ?>"><?php _e('Email template settings', "sinhro-sms-integration"); ?></a>
       <a href="<?php echo wc_get_current_admin_url() ?>&tab=test-email" class="nav-tab <?php if($tab==='test-email'):?>nav-tab-active<?php endif; ?>"><?php _e('Test email', "sinhro-sms-integration"); ?></a>
       <a href="<?php echo wc_get_current_admin_url() ?>&tab=browse-abandoned-carts" class="nav-tab <?php if($tab==='browse-abandoned-carts'):?>nav-tab-active<?php endif; ?>"><?php _e('Browse abandoned carts', "sinhro-sms-integration"); ?></a>
-      <a href="<?php echo wc_get_current_admin_url() ?>&tab=post-purchase" class="nav-tab <?php if($tab==='post-purchase'):?>nav-tab-active<?php endif; ?>"><?php _e('Post purchase settings', "sinhro-sms-integration"); ?></a>
+      <a href="<?php echo wc_get_current_admin_url() ?>&tab=post-purchase-settings" class="nav-tab <?php if($tab==='post-purchase-settings'):?>nav-tab-active<?php endif; ?>"><?php _e('Post purchase settings', "sinhro-sms-integration"); ?></a>
+      <a href="<?php echo wc_get_current_admin_url() ?>&tab=browse-post-purchase-entries" class="nav-tab <?php if($tab==='browse-post-purchase-entries'):?>nav-tab-active<?php endif; ?>"><?php _e('Post purchase entries', "sinhro-sms-integration"); ?></a>
       <a href="<?php echo wc_get_current_admin_url() ?>&tab=browse-post-purchase" class="nav-tab <?php if($tab==='browse-post-purchase'):?>nav-tab-active<?php endif; ?>"><?php _e('Browse post purchase survey results', "sinhro-sms-integration"); ?></a>
     </nav>
 
@@ -517,7 +519,7 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
       <?php submit_button(); ?>
     </form>
 
-    <?php } else if ($tab === "post-purchase") { ?>
+    <?php } else if ($tab === "post-purchase-settings") { ?>
 
     <form method="post" action="options.php">
       <?php settings_fields("sinhro-post-purchase-settings"); ?>
@@ -652,6 +654,13 @@ $tab = isset($_GET['tab']) ? $_GET['tab'] : "times";
       ?>
       <h3><?php esc_html_e("Currently abandoned carts", "sinhro-sms-integration"); ?><h3>
       <?php	$abandoned_cart_table->display(); ?>
+
+    <?php } else if ($tab === "browse-post-purchase-entries") {
+        $post_purchase_entries_table = new Post_Purchase_Entries_Admin_List_Table();
+        $post_purchase_entries_table->prepare_items();
+      ?>
+      <h3><?php esc_html_e("Post purchase entries", "sinhro-sms-integration"); ?><h3>
+      <?php	$post_purchase_entries_table->display(); ?>
 
     <?php } else if ($tab === "browse-post-purchase") {
         $post_purchase_survey_results_table = new Post_Purchase_Survey_Results_Admin_List_Table();
